@@ -2,5 +2,5 @@
 
 Pour build le robot :
 - `cd irobot`
-- `mkdir build`
+- `mkdir bin`
 - `make`
