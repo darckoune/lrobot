@@ -1,4 +1,6 @@
-#include <MeMegaPi.h>
+#include "bluetooth.h"
+
+Bluetooth b;
 
 void setup() {
   Serial.begin(9600);
@@ -6,12 +8,7 @@ void setup() {
 }
 
 void loop() {
-  // Write back data received from Bluetooth to Serial monitor
-  if (Serial3.available()) {
-    Serial.write(Serial3.read());
-  }
-  // Send to Bluetooth data received from Serial monitor
-  if (Serial.available()) {
-    Serial3.write(Serial.read());
+  if (b.recievedData()){
+    Serial3.println(b.getData());
   }
 }
