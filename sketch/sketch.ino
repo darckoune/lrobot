@@ -9,6 +9,6 @@ void setup() {
 
 void loop() {
   if (b.recievedData()){
-    Serial3.println("You said : " + b.getData());
+    b.sendData("You said : " + b.getData());
   }
 }

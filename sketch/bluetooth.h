@@ -10,6 +10,7 @@ class Bluetooth {
   Bluetooth();
   int recievedData();
   String getData();
+  void sendData(String);
 
   private:
   void fetchSerial();

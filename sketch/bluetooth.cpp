@@ -37,3 +37,7 @@ void Bluetooth::fetchSerial(){
     lastChar = c;
   }
 }
+
+void Bluetooth::sendData(String data){
+  Serial3.println(data);
+}
