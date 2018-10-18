@@ -1,6 +1,6 @@
 #include "bluetooth.h"
 
-Bluetooth b;
+Bluetooth bluetooth;
 
 void setup() {
   Serial.begin(9600);
@@ -8,7 +8,7 @@ void setup() {
 }
 
 void loop() {
-  if (b.recievedData()){
-    b.sendData("You said : " + b.getData());
+  if (bluetooth.recievedData()){
+    bluetooth.sendData("You said : " + bluetooth.getData());
   }
 }
