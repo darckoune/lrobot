@@ -1,18 +1,17 @@
-#include <MeMCore.h>
-#include <MeBluetooth.h>
+#include <MeMegaPi.h>
 
-void setup()
-{
-  pinMode(13, OUTPUT);
+void setup() {
+  Serial.begin(9600);
+  Serial3.begin(115200);
 }
 
 void loop() {
-  digitalWrite(13, HIGH);
-  delay(1000);
-  digitalWrite(13, LOW);
-  delay(2000);
-  digitalWrite(13, HIGH);
-  delay(3000);
-  digitalWrite(13, LOW);
-  delay(4000);
+  // Write back data received from Bluetooth to Serial monitor
+  if (Serial3.available()) {
+    Serial.write(Serial3.read());
+  }
+  // Send to Bluetooth data received from Serial monitor
+  if (Serial.available()) {
+    Serial3.write(Serial.read());
+  }
 }
