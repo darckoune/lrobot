@@ -18,7 +18,6 @@ String Bluetooth::getData(){
     String s = data;
     dataAvailable = false;
     data = "";
-    Serial.println(s.length());
     return s;
   } else {
     return String("");
