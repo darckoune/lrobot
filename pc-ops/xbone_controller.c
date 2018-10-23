@@ -1,9 +1,9 @@
-//        ██████╗  ██████╗ ██████╗  █████╗ ███████╗██╗███████╗████████╗
-//        ██╔══██╗██╔═══██╗██╔══██╗██╔══██╗██╔════╝██║██╔════╝╚══██╔══╝
-//        ██████╔╝██║   ██║██████╔╝███████║█████╗  ██║███████╗   ██║
-//        ██╔══██╗██║   ██║██╔══██╗██╔══██║██╔══╝  ██║╚════██║   ██║
-//        ██║  ██║╚██████╔╝██████╔╝██║  ██║██║     ██║███████║   ██║
-//        ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝   ╚═╝
+//             ██████╗  ██████╗ ██████╗  █████╗ ███████╗██╗███████╗
+//             ██╔══██╗██╔═══██╗██╔══██╗██╔══██╗██╔════╝██║██╔════╝
+//             ██████╔╝██║   ██║██████╔╝███████║█████╗  ██║███████╗
+//             ██╔══██╗██║   ██║██╔══██╗██╔══██║██╔══╝  ██║╚════██║
+//             ██║  ██║╚██████╔╝██████╔╝██║  ██║██║     ██║███████║
+//             ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
 
 #include <linux/input.h> // struct input_event
 #include <sys/types.h>
@@ -27,13 +27,13 @@
 //   (binary) -> value 0 | 1
 // Y          -> code  308
 //   (binary) -> value 0 | 1
-// L1         -> code  311
+// L1         -> code  310
 //   (binary) -> value 0 | 1
-// R1         -> code  310
+// R1         -> code  311
 //   (binary) -> value 0 | 1
-// JSR BUTTON -> code  318
+// JSR BUTTON -> code  317
 //   (binary) -> value 0 | 1
-// JSL BUTTON -> code  317
+// JSL BUTTON -> code  318
 //   (binary) -> value 0 | 1
 // SELECT     -> code  314
 //   (binary) -> value 0 | 1
@@ -44,13 +44,13 @@
 
 // type 3:
 // ~ JSR | JSL | R2 | L2 | DPAD ~
-// JSL HORIZONTAL  -> code  1
+// JSL HORIZONTAL  -> code  0
 //       (16 bits) -> value LEFT -32768 | 32767 RIGHT
-// JSL VERTICAL    -> code  0
+// JSL VERTICAL    -> code  1
 //       (16 bits) -> value UP   -32768 | 32767 DOWN
-// JSR HORIZONTAL  -> code  4
+// JSR HORIZONTAL  -> code  3
 //       (16 bits) -> value LEFT -32768 | 32767 RIGHT
-// JSR VERTICAL    -> code  3
+// JSR VERTICAL    -> code  4
 //       (16 bits) -> value UP   -32768 | 32767 DOWN
 // L2              -> code  2
 //       (10 bits) -> value 0 | 1023
