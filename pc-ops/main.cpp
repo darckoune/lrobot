@@ -38,7 +38,7 @@ int main() {
     if (c1.getB()){
       bluetooth << "B" << endl;
     }
-    cout << c1 << endl;
+    c1.getLastEvents();
   }
 
   return 0;

@@ -23,34 +23,59 @@ int  Controller::getR2()     const { return R2.value; }
 int  Controller::getDPAD_H() const { return DPAD_H.value; }
 int  Controller::getDPAD_V() const { return DPAD_V.value; }
 
+void Controller::getLastEvents() {
+  if(A.changed){
+    cout << "A = " << A.value << endl;
+    A.changed = false;
+  }
+  if(B.changed){
+    cout << "B = " << B.value << endl;
+    B.changed = false;
+  }
+}
+
 void Controller::update(input_event ev) {
   if (ev.type == 1) { // digital
     switch(ev.code) {
-      case 304: A.value      = ev.value; break;
-      case 305: B.value      = ev.value; break;
-      case 307: X.value      = ev.value; break;
-      case 308: Y.value      = ev.value; break;
-      case 310: L1.value     = ev.value; break;
-      case 311: R1.value     = ev.value; break;
-      case 317: JSL_B.value  = ev.value; break;
-      case 318: JSR_B.value  = ev.value; break;
-      case 314: SELECT.value = ev.value; break;
-      case 315: START.value  = ev.value; break;
-      case 316: HOME.value   = ev.value; break;
+      case 304: setBooleanInputValue(&A, ev.value); break;
+      case 305: setBooleanInputValue(&B, ev.value); break;
+      case 307: setBooleanInputValue(&X, ev.value); break;
+      case 308: setBooleanInputValue(&Y, ev.value); break;
+      case 310: setBooleanInputValue(&L1, ev.value); break;
+      case 311: setBooleanInputValue(&R1, ev.value); break;
+      case 317: setBooleanInputValue(&JSL_B, ev.value); break;
+      case 318: setBooleanInputValue(&JSR_B, ev.value); break;
+      case 314: setBooleanInputValue(&SELECT, ev.value); break;
+      case 315: setBooleanInputValue(&START, ev.value); break;
+      case 316: setBooleanInputValue(&HOME, ev.value); break;
       default: cout << "[CONTROLLER] digital not assigned" << endl;
     }
   } else if (ev.type == 3) {            // analogic and dpad
     switch(ev.code) {
-      case   0: JSL_H.value  = ev.value; break;
-      case   1: JSL_V.value  = ev.value; break;
-      case   3: JSR_H.value  = ev.value; break;
-      case   4: JSR_V.value  = ev.value; break;
-      case   2: L2.value     = ev.value; break;
-      case   5: R2.value     = ev.value; break;
-      case  16: DPAD_H.value = ev.value; break;
-      case  17: DPAD_V.value = ev.value; break;
+      case   0: setIntInputValue(&JSL_H, ev.value); break;
+      case   1: setIntInputValue(&JSL_V, ev.value); break;
+      case   3: setIntInputValue(&JSR_H, ev.value); break;
+      case   4: setIntInputValue(&JSR_V, ev.value); break;
+      case   2: setIntInputValue(&L2, ev.value); break;
+      case   5: setIntInputValue(&R2, ev.value); break;
+      case  16: setIntInputValue(&DPAD_H, ev.value); break;
+      case  17: setIntInputValue(&DPAD_V, ev.value); break;
       default: cout << "[CONTROLLER] analog not assigned" << endl;
     }
+  }
+}
+
+void Controller::setBooleanInputValue(booleanInput* input, bool value){
+  if (input->value != value){
+    input->value = value;
+    input->changed = true;
+  }
+}
+
+void Controller::setIntInputValue(intInput* input, int value){
+  if (input->value != value){
+    input->value = value;
+    input->changed = true;
   }
 }
 
