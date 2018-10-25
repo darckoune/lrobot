@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="utf-8" />
+  <title>Semantic UI CDN</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.css"/>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.js"></script>
+  <link href="http://www.cssscript.com/wp-includes/css/sticky.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="style.css">
+  <title>WebSocket Test</title>
+</head>
+<body>
+  <h1 class="title">Equipe EISTI : Robafis 2018</h1>
+  <h2 class="ui icon header">
+    <i class="circular pink settings icon"></i>
+    <div class="content">
+      Maintenance
+    </div>
+  </h2
+  <div class="ui segment">
+   <div class="field">
+     <div class="ui toggle checkbox">
+       <input name="gift" tabindex="0" class="hidden" type="checkbox" checked>
+       <label>On/off</label>
+     </div>
+   </div>
+  </div>
+  <ul class="progress">
+    <!-- le 98 est le pourcentage au centre est celui utilisé pour afficher le cercle  -->
+    <li data-name="UI Skill" data-percent="98%">
+      <svg viewBox="-10 -10 220 220">
+        <g fill="none" stroke-width="9" transform="translate(100,100)">
+          <path d="M 0,-100 A 100,100 0 0,1 86.6,-50" stroke="url(#cl1)"/>
+          <path d="M 86.6,-50 A 100,100 0 0,1 86.6,50" stroke="url(#cl2)"/>
+          <path d="M 86.6,50 A 100,100 0 0,1 0,100" stroke="url(#cl3)"/>
+          <path d="M 0,100 A 100,100 0 0,1 -86.6,50" stroke="url(#cl4)"/>
+          <path d="M -86.6,50 A 100,100 0 0,1 -86.6,-50" stroke="url(#cl5)"/>
+          <path d="M -86.6,-50 A 100,100 0 0,1 0,-100" stroke="url(#cl6)"/>
+        </g>
+      </svg>
+      <svg viewBox="-10 -10 220 220">
+        <path d="M200,100 C200,44.771525 155.228475,0 100,0 C44.771525,0 0,44.771525 0,100 C0,155.228475 44.771525,200 100,200 C155.228475,200 200,155.228475 200,100 Z" stroke-dashoffset="610"></path>
+      </svg>
+    </li>
+  </ul>
+  <!-- Définitions d'un cercle  -->
+  <svg width="0" height="0">
+  <defs>
+    <linearGradient id="cl1" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#618099"/>
+      <stop offset="100%" stop-color="#8e6677"/>
+    </linearGradient>
+    <linearGradient id="cl2" gradientUnits="objectBoundingBox" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#8e6677"/>
+      <stop offset="100%" stop-color="#9b5e67"/>
+    </linearGradient>
+    <linearGradient id="cl3" gradientUnits="objectBoundingBox" x1="1" y1="0" x2="0" y2="1">
+      <stop stop-color="#9b5e67"/>
+      <stop offset="100%" stop-color="#9c787a"/>
+    </linearGradient>
+    <linearGradient id="cl4" gradientUnits="objectBoundingBox" x1="1" y1="1" x2="0" y2="0">
+      <stop stop-color="#9c787a"/>
+      <stop offset="100%" stop-color="#817a94"/>
+    </linearGradient>
+    <linearGradient id="cl5" gradientUnits="objectBoundingBox" x1="0" y1="1" x2="0" y2="0">
+      <stop stop-color="#817a94"/>
+      <stop offset="100%" stop-color="#498a98"/>
+    </linearGradient>
+    <linearGradient id="cl6" gradientUnits="objectBoundingBox" x1="0" y1="1" x2="1" y2="0">
+      <stop stop-color="#498a98"/>
+      <stop offset="100%" stop-color="#618099"/>
+    </linearGradient>
+  </defs>
+  </svg>
+  <script>
+    var ws;
+    window.onload=function(){
+      ws=new WebSocket("ws://localhost:8080/echo");
+      ws.onmessage=function(evt){console.log(evt.data);};
+      ws.onopen=function(evt){
+        ws.send("Hello");
+      }
+    }
+    window.onclose=function(){
+      ws.close();
+    }
+
+    (function(i,s,o,g,r,a,m){
+      i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)
+      },i[r].l=1*new Date();
+       a=s.createElement(o),
+       m=s.getElementsByTagName(o)[0];
+       a.async=1;
+       a.src=g;m.parentNode.insertBefore(a,m)
+    })
+    (window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-46156385-1', 'cssscript.com');
+    ga('send', 'pageview');
+
+  </script>
+</body>
+</html>
