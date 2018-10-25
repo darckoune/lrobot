@@ -6,6 +6,7 @@
 //             ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
 
 #include <iostream>
+#include <fstream>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -25,11 +26,19 @@ int main() {
   fd = open("/dev/input/by-id/usb-Microsoft_Controller_7EED87356C04-event-joystick", O_RDONLY);
   struct input_event ev;
 
+  ofstream bluetooth;
+  bluetooth.open("/dev/rfcomm0");
+
   while (1) {
     read(fd, &ev, sizeof(struct input_event));
     c1.update(ev);
-
-    cout << c1;
+    if (c1.getA()){
+      bluetooth << "A" << endl;
+    }
+    if (c1.getB()){
+      bluetooth << "B" << endl;
+    }
+    cout << c1 << endl;
   }
 
   return 0;
