@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <linux/input.h>
+#include <string.h>
 using namespace std;
 
 struct booleanInput {
@@ -68,7 +69,7 @@ class Controller {
   int  getDPAD_H() const;
   int  getDPAD_V() const;
 
-  void getLastEvents();
+  string getLastEvents();
 
   void update(input_event ev);
 

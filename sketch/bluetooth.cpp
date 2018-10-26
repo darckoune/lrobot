@@ -1,4 +1,4 @@
-#include <MeMegaPi.h>
+#include "Arduino.h"
 #include "bluetooth.h"
 
 Bluetooth::Bluetooth(){
@@ -27,10 +27,10 @@ String Bluetooth::getData(){
 void Bluetooth::fetchSerial(){
   while (Serial3.available()){
     char c = char(Serial3.read());
-    if (c != 13 && c != 10){
+    if (c != 10){
       data = data + c; 
     }
-    if (c == 10 && lastChar == 13){
+    if (c == 10){
       dataAvailable = true;
     }
     lastChar = c;

@@ -23,15 +23,18 @@ int  Controller::getR2()     const { return R2.value; }
 int  Controller::getDPAD_H() const { return DPAD_H.value; }
 int  Controller::getDPAD_V() const { return DPAD_V.value; }
 
-void Controller::getLastEvents() {
+string Controller::getLastEvents() {
   if(A.changed){
-    cout << "A = " << A.value << endl;
     A.changed = false;
+    string v = string(A.value ? "1" : "0");
+    return (string("A" + v));
   }
-  if(B.changed){
-    cout << "B = " << B.value << endl;
+  if(B.changed){  
     B.changed = false;
+    string v = string(B.value ? "1" : "0");
+    return (string("B" + v));
   }
+  return string("");
 }
 
 void Controller::update(input_event ev) {
