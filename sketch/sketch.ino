@@ -1,9 +1,11 @@
 #include "bluetooth.h"
 #include <MeMegaPi.h>
-#include <string.h>
+#include <ArduinoSTL.h>
+
+using namespace std;
 
 Bluetooth bluetooth;
-String data;
+vector<String> data;
 
 MeMegaPiDCMotor motor1(PORT1B);
 MeMegaPiDCMotor motor2(PORT2B);
@@ -21,13 +23,17 @@ void setup() {
 void loop() {
   if (bluetooth.recievedData()){
     data = bluetooth.getData();
-    if (data == "A1"){
+    if (data.size() == 1){
       motor1.run(100);
       motor2.run(-100);
-    } else if (data == "A0") {
+    } else if (data.size() == 2) {
       motor1.stop();
       motor2.stop();
     }
-    bluetooth.sendData(data);
+    String text = String("Data recieved (" + String(data.size()) + ") : ");
+    for (int i = 0 ; i < data.size() ; i++){
+      text += " " + data[i];
+    }
+    bluetooth.sendData(text);
   }
 }

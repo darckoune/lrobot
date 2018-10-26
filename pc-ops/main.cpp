@@ -32,7 +32,8 @@ int main() {
   while (1) {
     read(fd, &ev, sizeof(struct input_event));
     c1.update(ev);
-    string cevent = c1.getLastEvents();
+    string cevent = c1.getLastEvent();
+    //cout << c1;
     if (cevent != ""){
       cout << cevent << endl;
       bluetooth << cevent << endl;

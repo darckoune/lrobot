@@ -23,16 +23,83 @@ int  Controller::getR2()     const { return R2.value; }
 int  Controller::getDPAD_H() const { return DPAD_H.value; }
 int  Controller::getDPAD_V() const { return DPAD_V.value; }
 
-string Controller::getLastEvents() {
+string Controller::getLastEvent() {
   if(A.changed){
     A.changed = false;
-    string v = string(A.value ? "1" : "0");
-    return (string("A" + v));
+    if(A.value){
+      return (string("CRANE:LOWER"));
+    } else {
+      return (string("CRANE:STOP"));
+    }
   }
-  if(B.changed){  
+  if(Y.changed){
+    Y.changed = false;
+    if(Y.value){
+      return (string("CRANE:RAISE"));
+    } else {
+      return (string("CRANE:STOP"));
+    }
+  }
+  if(B.changed){
     B.changed = false;
-    string v = string(B.value ? "1" : "0");
-    return (string("B" + v));
+    if(B.value){
+      return (string("PLIERS:OPEN"));
+    } else {
+      return (string("PLIERS:STOP"));
+    }
+  }
+  if(X.changed){
+    X.changed = false;
+    if(X.value){
+      return (string("PLIERS:CLOSE"));
+    } else {
+      return (string("PLIERS:STOP"));
+    }
+  }
+  if(HOME.changed){
+    HOME.changed = false;
+    if(HOME.value){
+      return (string("AUTOPILOT:TOGGLE"));
+    }
+  }
+  if (JSL_V.changed || JSL_H.changed){
+    JSL_H.changed = false;
+    JSL_V.changed = false;
+    string v = to_string((-1 * JSL_V.value)/327);
+    string h = to_string((JSL_H.value)/327);
+    return (string("MOVE:" + v + ":" + h));
+  }
+  if (DPAD_V.changed){
+    DPAD_V.changed = false;
+    string state = "CRANE:";
+    switch(DPAD_V.value){
+      case 0:
+        state += "STOP";
+        break;
+      case 1:
+        state += "LOWER";
+        break;
+      case -1:
+        state += "RAISE";
+        break;
+    }
+    return state;
+  }
+  if (DPAD_H.changed){
+    DPAD_H.changed = false;
+    string state = "PLIERS:";
+    switch(DPAD_H.value){
+      case 0:
+        state += "STOP";
+        break;
+      case 1:
+        state += "OPEN";
+        break;
+      case -1:
+        state += "CLOSE";
+        break;
+    }
+    return state;
   }
   return string("");
 }
@@ -61,8 +128,8 @@ void Controller::update(input_event ev) {
       case   4: setIntInputValue(&JSR_V, ev.value); break;
       case   2: setIntInputValue(&L2, ev.value); break;
       case   5: setIntInputValue(&R2, ev.value); break;
-      case  16: setIntInputValue(&DPAD_H, ev.value); break;
-      case  17: setIntInputValue(&DPAD_V, ev.value); break;
+      case  16: setIntAsBooleanInputValue(&DPAD_H, ev.value); break;
+      case  17: setIntAsBooleanInputValue(&DPAD_V, ev.value); break;
       default: cout << "[CONTROLLER] analog not assigned" << endl;
     }
   }
@@ -76,6 +143,16 @@ void Controller::setBooleanInputValue(booleanInput* input, bool value){
 }
 
 void Controller::setIntInputValue(intInput* input, int value){
+  if (abs(value) < 5000){
+    value = 0;
+  }
+  if (abs(input->value - value) > 1500){
+    input->value = value;
+    input->changed = true;
+  }
+}
+
+void Controller::setIntAsBooleanInputValue(intInput* input, int value){
   if (input->value != value){
     input->value = value;
     input->changed = true;

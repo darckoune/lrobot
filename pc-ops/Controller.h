@@ -44,6 +44,7 @@ class Controller {
 
   void setBooleanInputValue(booleanInput*, bool);
   void setIntInputValue(intInput*, int);
+  void setIntAsBooleanInputValue(intInput*, int);
 
   // Methods
   public:
@@ -69,7 +70,7 @@ class Controller {
   int  getDPAD_H() const;
   int  getDPAD_V() const;
 
-  string getLastEvents();
+  string getLastEvent();
 
   void update(input_event ev);
 
