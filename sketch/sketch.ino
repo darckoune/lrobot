@@ -15,7 +15,7 @@ MeRGBLed led(PORT_7);
 
 uint8_t motorSpeed = 100; /* value: between -255 and 255. */
 int previousSensorState = -1;
-bool autoPilot = true;
+bool autoPilot = false;
 
 void setup() {
   Serial.begin(9600);
@@ -86,9 +86,16 @@ void loop() {
 void proceedCommand(String command){
   bluetooth.sendData("Proceeding command... (" + command +")");
   if (command.substring(0,2) == String("A")){
-    autoPilot = !autoPilot;
-    motor1.stop();
-    motor2.stop();
-    bluetooth.sendData("SWITCH !");
+    if (autoPilot){
+      autoPilot = false;
+      motor1.stop();
+      motor2.stop();
+      led.setColor(0, 0, 0);
+      led.show();
+      bluetooth.sendData("SWITCH !");
+    } else {
+      autoPilot = true;
+    }
+    
   }
 }
