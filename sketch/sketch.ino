@@ -1,6 +1,7 @@
 #include "bluetooth.h"
 #include <MeMegaPi.h>
 #include <ArduinoSTL.h>
+#include <math.h>
 
 using namespace std;
 
@@ -13,9 +14,29 @@ MeLineFollower lineFinder(PORT_5);
 MeLightSensor lightSensor(PORT_6);
 MeRGBLed led(PORT_7);
 
-uint8_t motorSpeed = 100; /* value: between -255 and 255. */
-int previousSensorState = -1;
 bool autoPilot = false;
+uint8_t maxMotorValue = 255;
+int previousSensorState = -1;
+float colorThreshold = 1;
+int colorDetected = 0;
+int detectionThreshold = 2;
+
+uint8_t motorValue(float speed) {
+  float secondsPerMinute = 60;
+  float wheelDiameter = 40;
+  float maxMotorSpeed = 185;
+  
+  return (secondsPerMinute * speed * maxMotorValue) / (wheelDiameter * PI * maxMotorSpeed);
+}
+
+void autoPilotStop() {
+  autoPilot = false;
+  motor1.stop();
+  motor2.stop();
+  led.setColor(0, 0, 0);
+  led.show();
+  colorDetected = 0;
+}
 
 void setup() {
   Serial.begin(9600);
@@ -44,20 +65,20 @@ void loop() {
     if (sensorState != previousSensorState) {
       switch(sensorState) {
         case S1_IN_S2_IN:
-          motor1.run(motorSpeed);
-          motor2.run(-motorSpeed);
+          motor1.run(motorValue(80));
+          motor2.run(-motorValue(80));
           break;
         case S1_IN_S2_OUT:
-          motor1.stop();
-          motor2.run(-2*motorSpeed);
+          motor1.run(-maxMotorValue);
+          motor2.run(-maxMotorValue);
           break;
         case S1_OUT_S2_IN:
-          motor1.run(2*motorSpeed);
-          motor2.stop();
+          motor1.run(maxMotorValue);
+          motor2.run(maxMotorValue);
           break;
         case S1_OUT_S2_OUT:
-          motor1.run(-motorSpeed);
-          motor2.run(motorSpeed);
+          motor1.run(-motorValue(80));
+          motor2.run(motorValue(80));
           break;
         default:
           break;
@@ -69,16 +90,20 @@ void loop() {
     led.setColor(255, 0, 0);
     led.show();
     int colorValue = lightSensor.read();
+    
     led.setColor(0, 255, 255);
     led.show();
-    int oppositeValue = lightSensor.read();
+    int oppositeColorValue = lightSensor.read();
   
-    if (colorValue > oppositeValue) {
-      autoPilot = false;
-      motor1.stop();
-      motor2.stop();
-      led.setColor(0, 0, 0);
-      led.show();
+    if (colorValue > colorThreshold * oppositeColorValue) {
+      colorDetected++;
+
+      if (colorDetected >= detectionThreshold) {
+        autoPilotStop();
+      }
+    }
+    else {
+      colorDetected = 0;
     }
   }
 }
@@ -87,11 +112,7 @@ void proceedCommand(String command){
   bluetooth.sendData("Proceeding command... (" + command +")");
   if (command.substring(0,2) == String("A")){
     if (autoPilot){
-      autoPilot = false;
-      motor1.stop();
-      motor2.stop();
-      led.setColor(0, 0, 0);
-      led.show();
+      autoPilotStop();
       bluetooth.sendData("SWITCH !");
     } else {
       autoPilot = true;
