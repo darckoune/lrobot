@@ -6,27 +6,16 @@ using namespace std;
 
 Bluetooth bluetooth;
 vector<String> data;
-MeRGBLed led(0, 30);
 
 MeMegaPiDCMotor motor1(PORT1B);
 MeMegaPiDCMotor motor2(PORT2B);
 MeLineFollower lineFinder(PORT_5);
-
+MeLightSensor lightSensor(PORT_6);
+MeRGBLed led(PORT_7);
 
 uint8_t motorSpeed = 100; /* value: between -255 and 255. */
-int previousState = -1;
-
-bool ledState = false;
-
-void toggleLed(){
-   if (ledState){
-      digitalWrite(13, HIGH);
-   } else {
-      digitalWrite(13, LOW);
-   }
-   ledState = !ledState;
-}
-
+int previousSensorState = -1;
+bool autoPilot = true;
 
 void setup() {
   Serial.begin(9600);
@@ -37,7 +26,6 @@ void setup() {
 void loop() {
   if (bluetooth.recievedData()){
     data = bluetooth.getData();
-    toggleLed();
     if (data.size() == 1){
       motor1.run(100);
       motor2.run(-100);
@@ -50,5 +38,49 @@ void loop() {
       text += " " + data[i];
     }
     bluetooth.sendData(text);
+  }
+
+  if (autoPilot) {
+    int sensorState = lineFinder.readSensors();
+    
+    if (sensorState != previousSensorState) {
+      switch(sensorState) {
+        case S1_IN_S2_IN:
+          motor1.run(motorSpeed);
+          motor2.run(-motorSpeed);
+          break;
+        case S1_IN_S2_OUT:
+          motor1.stop();
+          motor2.run(-2*motorSpeed);
+          break;
+        case S1_OUT_S2_IN:
+          motor1.run(2*motorSpeed);
+          motor2.stop();
+          break;
+        case S1_OUT_S2_OUT:
+          motor1.run(-motorSpeed);
+          motor2.run(motorSpeed);
+          break;
+        default:
+          break;
+      }
+      
+      previousSensorState = sensorState;
+    }
+    
+    led.setColor(255, 0, 0);
+    led.show();
+    int colorValue = lightSensor.read();
+    led.setColor(0, 255, 255);
+    led.show();
+    int oppositeValue = lightSensor.read();
+  
+    if (colorValue > oppositeValue) {
+      autoPilot = false;
+      motor1.stop();
+      motor2.stop();
+      led.setColor(0, 0, 0);
+      led.show();
+    }
   }
 }
