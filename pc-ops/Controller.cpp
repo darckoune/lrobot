@@ -59,7 +59,7 @@ string Controller::getLastEvent() {
   if(HOME.changed){
     HOME.changed = false;
     if(HOME.value){
-      return (string("AUTOPILOT:TOGGLE"));
+      return (string("A"));
     }
   }
   if (JSL_V.changed || JSL_H.changed){

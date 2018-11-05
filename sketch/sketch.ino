@@ -20,7 +20,6 @@ bool autoPilot = true;
 void setup() {
   Serial.begin(9600);
   Serial3.begin(115200);
-  led.setpin(13);
 }
 
 void loop() {
@@ -35,9 +34,8 @@ void loop() {
     }
     String text = String("Data recieved (" + String(data.size()) + ") : ");
     for (int i = 0 ; i < data.size() ; i++){
-      text += " " + data[i];
+      proceedCommand(data[i]);
     }
-    bluetooth.sendData(text);
   }
 
   if (autoPilot) {
@@ -82,5 +80,15 @@ void loop() {
       led.setColor(0, 0, 0);
       led.show();
     }
+  }
+}
+
+void proceedCommand(String command){
+  bluetooth.sendData("Proceeding command... (" + command +")");
+  if (command.substring(0,2) == String("A")){
+    autoPilot = !autoPilot;
+    motor1.stop();
+    motor2.stop();
+    bluetooth.sendData("SWITCH !");
   }
 }

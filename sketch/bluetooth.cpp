@@ -28,6 +28,7 @@ vector<String> Bluetooth::getData(){
 void Bluetooth::fetchSerial(){
   while (Serial3.available()){
     char c = char(Serial3.read());
+    sendData(String(c));
     if (c != 10){
       incomingData = incomingData + c; 
     } else {
