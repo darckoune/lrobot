@@ -96,6 +96,28 @@ void proceedCommand(String command){
     } else {
       autoPilot = true;
     }
+  }
+  if (command.substring(0,1) == String("M")){
+    bluetooth.sendData("MOVING");
+    int power = - (int) command[1];
+    int turn = (int) command[2];
     
+    int motor1power = -power - turn;
+    int motor2power = power - turn;
+
+    bluetooth.sendData(String(motor1power));
+    bluetooth.sendData(String(motor2power));
+    
+    bluetooth.sendData(String(power));
+    if (motor2power != 0){
+      motor2.run(motor2power);
+    } else {
+      motor2.stop();
+    }
+    if (motor1power != 0){
+      motor1.run(motor1power);
+    } else {
+      motor1.stop();
+    }
   }
 }

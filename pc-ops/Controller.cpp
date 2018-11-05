@@ -1,4 +1,5 @@
 #include "Controller.h"
+#include <string.h>
 
 using namespace std;
 
@@ -27,33 +28,33 @@ string Controller::getLastEvent() {
   if(A.changed){
     A.changed = false;
     if(A.value){
-      return (string("CRANE:LOWER"));
+      return (string("CL"));
     } else {
-      return (string("CRANE:STOP"));
+      return (string("CS"));
     }
   }
   if(Y.changed){
     Y.changed = false;
     if(Y.value){
-      return (string("CRANE:RAISE"));
+      return (string("CR"));
     } else {
-      return (string("CRANE:STOP"));
+      return (string("CS"));
     }
   }
   if(B.changed){
     B.changed = false;
     if(B.value){
-      return (string("PLIERS:OPEN"));
+      return (string("PO"));
     } else {
-      return (string("PLIERS:STOP"));
+      return (string("PS"));
     }
   }
   if(X.changed){
     X.changed = false;
     if(X.value){
-      return (string("PLIERS:CLOSE"));
+      return (string("PC"));
     } else {
-      return (string("PLIERS:STOP"));
+      return (string("PS"));
     }
   }
   if(HOME.changed){
@@ -65,38 +66,38 @@ string Controller::getLastEvent() {
   if (JSL_V.changed || JSL_H.changed){
     JSL_H.changed = false;
     JSL_V.changed = false;
-    string v = to_string((-1 * JSL_V.value)/327);
-    string h = to_string((JSL_H.value)/327);
-    return (string("MOVE:" + v + ":" + h));
+    int v = (-1 * JSL_V.value)/327;
+    int h = (JSL_H.value)/327;
+    return (string("M") + string(1, v) + string(1, h));
   }
   if (DPAD_V.changed){
     DPAD_V.changed = false;
-    string state = "CRANE:";
+    string state = "C";
     switch(DPAD_V.value){
       case 0:
-        state += "STOP";
+        state += "S";
         break;
       case 1:
-        state += "LOWER";
+        state += "L";
         break;
       case -1:
-        state += "RAISE";
+        state += "R";
         break;
     }
     return state;
   }
   if (DPAD_H.changed){
     DPAD_H.changed = false;
-    string state = "PLIERS:";
+    string state = "P";
     switch(DPAD_H.value){
       case 0:
-        state += "STOP";
+        state += "S";
         break;
       case 1:
-        state += "OPEN";
+        state += "O";
         break;
       case -1:
-        state += "CLOSE";
+        state += "C";
         break;
     }
     return state;
@@ -118,7 +119,7 @@ void Controller::update(input_event ev) {
       case 314: setBooleanInputValue(&SELECT, ev.value); break;
       case 315: setBooleanInputValue(&START, ev.value); break;
       case 316: setBooleanInputValue(&HOME, ev.value); break;
-      default: cout << "[CONTROLLER] digital not assigned" << endl;
+      default: cout << "WTF" << endl;
     }
   } else if (ev.type == 3) {            // analogic and dpad
     switch(ev.code) {
@@ -130,8 +131,8 @@ void Controller::update(input_event ev) {
       case   5: setIntInputValue(&R2, ev.value); break;
       case  16: setIntAsBooleanInputValue(&DPAD_H, ev.value); break;
       case  17: setIntAsBooleanInputValue(&DPAD_V, ev.value); break;
-      default: cout << "[CONTROLLER] analog not assigned" << endl;
-    }
+      default: cout << "WTF" << endl;
+}
   }
 }
 

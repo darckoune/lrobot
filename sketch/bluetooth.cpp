@@ -30,11 +30,12 @@ void Bluetooth::fetchSerial(){
     char c = char(Serial3.read());
     sendData(String(c));
     if (c != 10){
-      incomingData = incomingData + c; 
+      incomingData = incomingData + c;
     } else {
       data.push_back(incomingData);
       incomingData = "";
     }
+    
     lastChar = c;
   }
 }
