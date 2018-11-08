@@ -10,6 +10,8 @@ vector<String> data;
 
 MeMegaPiDCMotor motor1(PORT1B);
 MeMegaPiDCMotor motor2(PORT2B);
+MeMegaPiDCMotor motor3(PORT3B);
+MeMegaPiDCMotor motor4(PORT4B);
 MeLineFollower lineFinder(PORT_5);
 MeLightSensor lightSensor(PORT_6);
 MeRGBLed led(PORT_7);
@@ -23,7 +25,7 @@ int detectionThreshold = 2;
 
 uint8_t motorValue(float speed) {
   float secondsPerMinute = 60;
-  float wheelDiameter = 40;
+  float wheelDiameter = 60;
   float maxMotorSpeed = 185;
   
   return (secondsPerMinute * speed * maxMotorValue) / (wheelDiameter * PI * maxMotorSpeed);
@@ -139,6 +141,42 @@ void proceedCommand(String command){
       motor1.run(motor1power);
     } else {
       motor1.stop();
+    }
+  }
+  if (command.substring(0,1) == String("C")){
+    switch (command[1]) {
+      case 'S':
+        motor3.stop();
+        bluetooth.sendData("CRANE STOP");
+        break;
+      case 'L':
+        motor3.run(50);
+        bluetooth.sendData("CRANE LOWER");
+        break;
+      case 'R':
+        motor3.run(-50);
+        bluetooth.sendData("CRANE RAISE");
+        break;
+      default:
+        break;
+    }
+  }
+  if (command.substring(0,1) == String("P")){
+    switch (command[1]) {
+      case 'S':
+        motor4.stop();
+        bluetooth.sendData("PLIERS STOP");
+        break;
+      case 'O':
+        motor4.run(50);
+        bluetooth.sendData("PLIERS OPEN");
+        break;
+      case 'C':
+        motor4.run(-50);
+        bluetooth.sendData("PLIERS CLOSE");
+        break;
+      default:
+        break;
     }
   }
 }
