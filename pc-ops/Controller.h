@@ -16,6 +16,11 @@ struct intInput {
   bool changed;
 };
 
+struct controllerEvent {
+  string robotMessage;
+  string ihmMessage;
+};
+
 class Controller {
 
   // Attributs
@@ -70,7 +75,7 @@ class Controller {
   int  getDPAD_H() const;
   int  getDPAD_V() const;
 
-  string getLastEvent();
+  controllerEvent getLastEvent();
 
   void update(input_event ev);
 

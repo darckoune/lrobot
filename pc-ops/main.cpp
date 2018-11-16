@@ -22,6 +22,23 @@ using WsServer = SimpleWeb::SocketServer<SimpleWeb::WS>;
 
 shared_ptr<WsServer::Connection> clientConnection;
 
+void sendMessageToIHM(string type, string message){
+  if(clientConnection){
+    cout << message << endl;
+    string jsonMessage = "{\"type\":\"" + type + "\",\"message\":\"" + message + "\"}";
+    cout << "Sending to websocket : " << jsonMessage << endl;
+    auto send_stream = make_shared<WsServer::SendStream>();
+    *send_stream << jsonMessage;
+    clientConnection->send(send_stream, [](const SimpleWeb::error_code &ec) {
+      if(ec) {
+        cout << "Server: Error sending message. " <<
+            // See http://www.boost.org/doc/libs/1_55_0/doc/html/boost_asio/reference.html, Error Codes for error code meanings
+            "Error: " << ec << ", error message: " << ec.message() << endl;
+      }
+    });
+  }
+}
+
 int main() {
   cout << "Waiting for inputs . . ." << endl;
 
@@ -33,6 +50,9 @@ int main() {
 
   ofstream bluetooth;
   bluetooth.open("/dev/rfcomm0");
+
+  ifstream bluetoothReciever;
+  bluetoothReciever.open("/dev/rfcomm0");
 
   WsServer server;
   server.config.port = 8080;
@@ -75,21 +95,10 @@ int main() {
   while (1) {
     read(fd, &ev, sizeof(struct input_event));
     c1.update(ev);
-    string cevent = c1.getLastEvent();
-    if (cevent != ""){
-      if(clientConnection){
-        cout << "Sending to websocket : " << cevent << endl;
-        auto send_stream = make_shared<WsServer::SendStream>();
-        *send_stream << cevent;
-        clientConnection->send(send_stream, [](const SimpleWeb::error_code &ec) {
-          if(ec) {
-            cout << "Server: Error sending message. " <<
-                // See http://www.boost.org/doc/libs/1_55_0/doc/html/boost_asio/reference.html, Error Codes for error code meanings
-                "Error: " << ec << ", error message: " << ec.message() << endl;
-          }
-        });
-      }
-      bluetooth << cevent << endl;
+    controllerEvent cevent = c1.getLastEvent();
+    if (cevent.robotMessage != ""){
+      sendMessageToIHM("controller", cevent.ihmMessage);
+      bluetooth << cevent.robotMessage << endl;
     }
   }
 

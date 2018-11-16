@@ -24,43 +24,53 @@ int  Controller::getR2()     const { return R2.value; }
 int  Controller::getDPAD_H() const { return DPAD_H.value; }
 int  Controller::getDPAD_V() const { return DPAD_V.value; }
 
-string Controller::getLastEvent() {
+controllerEvent Controller::getLastEvent() {
+  controllerEvent event = {"", ""};
   if(A.changed){
     A.changed = false;
     if(A.value){
-      return (string("CL"));
+      event.robotMessage = string("CL");
+      event.ihmMessage = string("CRANE:LOWER");
     } else {
-      return (string("CS"));
+      event.robotMessage = string("CS");
+      event.ihmMessage = string("CRANE:STOP");
     }
   }
   if(Y.changed){
     Y.changed = false;
     if(Y.value){
-      return (string("CR"));
+      event.robotMessage = string("CR");
+      event.ihmMessage = string("CRANE:RAISE");
     } else {
-      return (string("CS"));
+      event.robotMessage = string("CS");
+      event.ihmMessage = string("CRANE:STOP");
     }
   }
   if(B.changed){
     B.changed = false;
     if(B.value){
-      return (string("PO"));
+      event.robotMessage = string("PO");
+      event.ihmMessage = string("PLIERS:OPEN");
     } else {
-      return (string("PS"));
+      event.robotMessage = string("PS");
+      event.ihmMessage = string("PLIERS:STOP");
     }
   }
   if(X.changed){
     X.changed = false;
     if(X.value){
-      return (string("PC"));
+      event.robotMessage = string("PC");
+      event.ihmMessage = string("PLIERS:CLOSE");
     } else {
-      return (string("PS"));
+      event.robotMessage = string("PS");
+      event.ihmMessage = string("PLIERS:STOP");
     }
   }
   if(HOME.changed){
     HOME.changed = false;
     if(HOME.value){
-      return (string("A"));
+      event.robotMessage = string("A");
+      event.ihmMessage = string("AUTOPILOT");
     }
   }
   if (JSL_V.changed || JSL_H.changed){
@@ -68,41 +78,48 @@ string Controller::getLastEvent() {
     JSL_V.changed = false;
     int v = (-1 * JSL_V.value)/327;
     int h = (JSL_H.value)/327;
-    return (string("M") + string(1, v) + string(1, h));
+    event.robotMessage = string("M") + string(1, v) + string(1, h);
+    event.ihmMessage = string("MOVE:") + to_string(v) + ":" + to_string(h);
   }
   if (DPAD_V.changed){
     DPAD_V.changed = false;
-    string state = "C";
+    event.robotMessage = "C";
+    event.ihmMessage = "CRANE:";
     switch(DPAD_V.value){
       case 0:
-        state += "S";
+        event.robotMessage += "S";
+        event.ihmMessage += "STOP";
         break;
       case 1:
-        state += "L";
+        event.robotMessage += "L";
+        event.ihmMessage += "LOWER";
         break;
       case -1:
-        state += "R";
+        event.robotMessage += "R";
+        event.ihmMessage += "RAISE";
         break;
     }
-    return state;
   }
   if (DPAD_H.changed){
     DPAD_H.changed = false;
-    string state = "P";
+    event.robotMessage += "P";
+    event.ihmMessage += "PLIERS:";
     switch(DPAD_H.value){
       case 0:
-        state += "S";
+        event.robotMessage += "S";
+        event.ihmMessage += "STOP";
         break;
       case 1:
-        state += "O";
+        event.robotMessage += "O";
+        event.ihmMessage += "OPEN";
         break;
       case -1:
-        state += "C";
+        event.robotMessage += "C";
+        event.ihmMessage += "CLOSE";
         break;
     }
-    return state;
   }
-  return string("");
+  return event;
 }
 
 void Controller::update(input_event ev) {
