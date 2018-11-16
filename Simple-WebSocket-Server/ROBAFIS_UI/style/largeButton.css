@@ -1,0 +1,16 @@
+.largeButton {
+    border: none;
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    border-radius: 30px;
+    width: 200px;
+}
+
+.pink {
+    background-color: #ff0054;
+    color: white;
+}

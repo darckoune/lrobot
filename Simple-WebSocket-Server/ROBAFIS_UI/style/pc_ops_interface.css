@@ -1,0 +1,19 @@
+@font-face {
+    font-family: "titleFont";
+    src:url("TESLA.ttf") format("opentype");
+}
+
+body {
+	background: #07192C;
+}
+
+.title1, .title2{
+    font-family: "titleFont";
+    color: white;
+}
+
+.title1{
+    font-size: 50px;
+    text-align: center;
+    margin: 80px 0;
+}
