@@ -23,14 +23,14 @@ float colorThreshold = 1;
 int colorDetected = 0;
 int detectionThreshold = 2;
 
-int motor1target = 0;
-int motor2target = 0;
-int motor1actual = 0;
-int motor2actual = 0;
-int motor3target = 0;
-int motor3actual = 0;
-int motor4target = 0;
-int motor4actual = 0;
+int motor1Target = 0;
+int motor1Actual = 0;
+int motor2Target = 0;
+int motor2Actual = 0;
+int motor3Target = 0;
+int motor3Actual = 0;
+int motor4Target = 0;
+int motor4Actual = 0;
 bool restartMotorsAfterDelay = false;
 int delayForMotorRestart = 75;
 
@@ -46,8 +46,8 @@ uint8_t motorValue(float speed) {
 
 void autoPilotStop() {
   autoPilot = false;
-  motor1target = 0;
-  motor2target = 0;
+  motor1Target = 0;
+  motor2Target = 0;
   led.setColor(0, 0, 0);
   led.show();
   colorDetected = 0;
@@ -60,21 +60,21 @@ void manageAutopilot(){
     if (sensorState != previousSensorState) {
       switch(sensorState) {
         case S1_IN_S2_IN:
-          motor1target = maxMotorValue;
-          motor2target = -maxMotorValue;
+          motor1Target = maxMotorValue;
+          motor2Target = -maxMotorValue;
           break;
         case S1_IN_S2_OUT:
-          motor1target = -maxMotorValue;
-          motor2target = -maxMotorValue;
+          motor1Target = -maxMotorValue;
+          motor2Target = -maxMotorValue;
           break;
         case S1_OUT_S2_IN:
-          motor1target = maxMotorValue;
-          motor2target = maxMotorValue;
+          motor1Target = maxMotorValue;
+          motor2Target = maxMotorValue;
           break;
         case S1_OUT_S2_OUT:
           bluetooth.sendData("Au secours");
-          motor1target = -maxMotorValue;
-          motor2target = +maxMotorValue;
+          motor1Target = -maxMotorValue;
+          motor2Target = +maxMotorValue;
           break;
         default:
           break;
@@ -129,24 +129,24 @@ void proceedCommand(String command){
     int power = - (int) command[1];
     int turn = (int) command[2];
     
-    motor1target = -power - turn;
-    motor2target = power - turn;
+    motor1Target = -power - turn;
+    motor2Target = power - turn;
 
-    bluetooth.sendData(String(motor1target));
-    bluetooth.sendData(String(motor2target));
+    bluetooth.sendData(String(motor1Target));
+    bluetooth.sendData(String(motor2Target));
   }
   if (command.substring(0,1) == String("C")){
     switch (command[1]) {
       case 'S':
-        motor3target = 0;
+        motor3Target = 0;
         bluetooth.sendData("CRANE STOP");
         break;
       case 'L':
-        motor3target = 50;
+        motor3Target = 50;
         bluetooth.sendData("CRANE LOWER");
         break;
       case 'R':
-        motor3target = -50;
+        motor3Target = -50;
         bluetooth.sendData("CRANE RAISE");
         break;
       default:
@@ -156,15 +156,15 @@ void proceedCommand(String command){
   if (command.substring(0,1) == String("P")){
     switch (command[1]) {
       case 'S':
-        motor4target = 0;
+        motor4Target = 0;
         bluetooth.sendData("PLIERS STOP");
         break;
       case 'O':
-        motor4target = 150;
+        motor4Target = 150;
         bluetooth.sendData("PLIERS OPEN");
         break;
       case 'C':
-        motor4target = -150;
+        motor4Target = -150;
         bluetooth.sendData("PLIERS CLOSE");
         break;
       default:
@@ -174,63 +174,63 @@ void proceedCommand(String command){
 }
 
 void updateMotors(){
-  if (motor1target != motor1actual){
-    if (motor1target == 0){
+  if (motor1Target != motor1Actual){
+    if (motor1Target == 0){
       motor1.stop();
     } else {
-      motor1.run(motor1target);
-    }
+      motor1.run(motor1Target);
+    } 
   }
 
-  if (motor2target != motor2actual){
-    if (motor2target == 0){
+  if (motor2Target != motor2Actual){
+    if (motor2Target == 0){
       motor2.stop();
     } else {
-      motor2.run(motor2target);
+      motor2.run(motor2Target);
     }
   }
 
-  if (motor3target != motor3actual){
-    if (motor3target == 0){
+  if (motor3Target != motor3Actual){
+    if (motor3Target == 0){
       motor3.stop();
     } else {
-      motor3.run(motor3target);
+      motor3.run(motor3Target);
     }
   }
 
-  if (motor4target != motor4actual){
-    if (motor4target == 0){
+  if (motor4Target != motor4Actual){
+    if (motor4Target == 0){
       motor4.stop();
     } else {
-      motor4.run(motor4target);
+      motor4.run(motor4Target);
     }
   }
 
   // Si un moteur de chenille a changé de sens
-  if ((motor1target * motor1actual < 0) || (motor2target * motor2actual < 0)){
+  if ((motor1Target * motor1Actual < 0) || (motor2Target * motor2Actual < 0)){
     motor1.stop(); // On arrête les moteurs des chenilles
     motor2.stop();
     restartMotorsAfterDelay = true; // Et on signale qu'il faut les redémarrer
   }
 
-  motor1actual = motor1target;
-  motor2actual = motor2target;
-  motor3actual = motor3target;
-  motor4actual = motor4target;
+  motor1Actual = motor1Target;
+  motor2Actual = motor2Target;
+  motor3Actual = motor3Target;
+  motor4Actual = motor4Target;
 }
 
 void restartMotorsIfNeeded(){
   if(restartMotorsAfterDelay){
     delay(delayForMotorRestart);
-    if (motor1actual == 0){
+    if (motor1Actual == 0){
       motor1.stop();
     } else {
-      motor1.run(motor1actual);
+      motor1.run(motor1Actual);
     }
-    if (motor2actual == 0){
+    if (motor2Actual == 0){
       motor2.stop();
     } else {
-      motor2.run(motor2actual);
+      motor2.run(motor2Actual);
     }
   }
 }
