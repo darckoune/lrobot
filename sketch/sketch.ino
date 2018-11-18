@@ -28,8 +28,8 @@ int motor2target = 0;
 int motor1actual = 0;
 int motor2actual = 0;
 int motor3target = 0;
-int motor3target = 0;
-int motor4actual = 0;
+int motor3actual = 0;
+int motor4target = 0;
 int motor4actual = 0;
 bool restartMotorsAfterDelay = false;
 int delayForMotorRestart = 75;
@@ -178,7 +178,7 @@ void updateMotors(){
     if (motor1target == 0){
       motor1.stop();
     } else {
-      motor1.run(motor1target)
+      motor1.run(motor1target);
     }
   }
 
@@ -186,7 +186,7 @@ void updateMotors(){
     if (motor2target == 0){
       motor2.stop();
     } else {
-      motor2.run(motor2target)
+      motor2.run(motor2target);
     }
   }
 
@@ -194,7 +194,7 @@ void updateMotors(){
     if (motor3target == 0){
       motor3.stop();
     } else {
-      motor3.run(motor3target)
+      motor3.run(motor3target);
     }
   }
 
@@ -202,7 +202,7 @@ void updateMotors(){
     if (motor4target == 0){
       motor4.stop();
     } else {
-      motor4.run(motor4target)
+      motor4.run(motor4target);
     }
   }
 
@@ -225,12 +225,12 @@ void restartMotorsIfNeeded(){
     if (motor1actual == 0){
       motor1.stop();
     } else {
-      motor1.run(motor1actual)
+      motor1.run(motor1actual);
     }
     if (motor2actual == 0){
       motor2.stop();
     } else {
-      motor2.run(motor2actual)
+      motor2.run(motor2actual);
     }
   }
 }
