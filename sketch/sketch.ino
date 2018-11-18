@@ -16,12 +16,23 @@ MeLineFollower lineFinder(PORT_5);
 MeLightSensor lightSensor(PORT_6);
 MeRGBLed led(PORT_7);
 
-bool autoPilot = false;
+bool autoPilot = true;
 uint8_t maxMotorValue = 255;
 int previousSensorState = -1;
 float colorThreshold = 1;
 int colorDetected = 0;
 int detectionThreshold = 2;
+
+int motor1target = 0;
+int motor2target = 0;
+int motor1actual = 0;
+int motor2actual = 0;
+int motor3target = 0;
+int motor3target = 0;
+int motor4actual = 0;
+int motor4actual = 0;
+bool restartMotorsAfterDelay = false;
+int delayForMotorRestart = 75;
 
 uint8_t motorValue(float speed) {
   float secondsPerMinute = 60;
@@ -31,56 +42,39 @@ uint8_t motorValue(float speed) {
   return (secondsPerMinute * speed * maxMotorValue) / (wheelDiameter * PI * maxMotorSpeed);
 }
 
+//////////// Robot control functions ///////////////////////
+
 void autoPilotStop() {
   autoPilot = false;
-  motor1.stop();
-  motor2.stop();
+  motor1target = 0;
+  motor2target = 0;
   led.setColor(0, 0, 0);
   led.show();
   colorDetected = 0;
 }
 
-void setup() {
-  Serial.begin(9600);
-  Serial3.begin(115200);
-}
-
-void loop() {
-  if (bluetooth.recievedData()){
-    data = bluetooth.getData();
-    if (data.size() == 1){
-      motor1.run(100);
-      motor2.run(-100);
-    } else if (data.size() == 2) {
-      motor1.stop();
-      motor2.stop();
-    }
-    String text = String("Data recieved (" + String(data.size()) + ") : ");
-    for (int i = 0 ; i < data.size() ; i++){
-      proceedCommand(data[i]);
-    }
-  }
-
+void manageAutopilot(){
   if (autoPilot) {
     int sensorState = lineFinder.readSensors();
     
     if (sensorState != previousSensorState) {
       switch(sensorState) {
         case S1_IN_S2_IN:
-          motor1.run(motorValue(80));
-          motor2.run(-motorValue(80));
+          motor1target = maxMotorValue;
+          motor2target = -maxMotorValue;
           break;
         case S1_IN_S2_OUT:
-          motor1.run(-maxMotorValue);
-          motor2.run(-maxMotorValue);
+          motor1target = -maxMotorValue;
+          motor2target = -maxMotorValue;
           break;
         case S1_OUT_S2_IN:
-          motor1.run(maxMotorValue);
-          motor2.run(maxMotorValue);
+          motor1target = maxMotorValue;
+          motor2target = maxMotorValue;
           break;
         case S1_OUT_S2_OUT:
-          motor1.run(-motorValue(80));
-          motor2.run(motorValue(80));
+          bluetooth.sendData("Au secours");
+          motor1target = -maxMotorValue;
+          motor2target = +maxMotorValue;
           break;
         default:
           break;
@@ -97,7 +91,7 @@ void loop() {
     led.show();
     int oppositeColorValue = lightSensor.read();
   
-    if (colorValue > colorThreshold * oppositeColorValue) {
+    /*if (colorValue > colorThreshold * oppositeColorValue) {
       colorDetected++;
 
       if (colorDetected >= detectionThreshold) {
@@ -106,6 +100,16 @@ void loop() {
     }
     else {
       colorDetected = 0;
+    }*/
+  }
+}
+
+void manageCommands(){
+  if (bluetooth.recievedData()){
+    data = bluetooth.getData();
+    String text = String("Data recieved (" + String(data.size()) + ") : ");
+    for (int i = 0 ; i < data.size() ; i++){
+      proceedCommand(data[i]);
     }
   }
 }
@@ -125,36 +129,24 @@ void proceedCommand(String command){
     int power = - (int) command[1];
     int turn = (int) command[2];
     
-    int motor1power = -power - turn;
-    int motor2power = power - turn;
+    motor1target = -power - turn;
+    motor2target = power - turn;
 
-    bluetooth.sendData(String(motor1power));
-    bluetooth.sendData(String(motor2power));
-    
-    bluetooth.sendData(String(power));
-    if (motor2power != 0){
-      motor2.run(motor2power);
-    } else {
-      motor2.stop();
-    }
-    if (motor1power != 0){
-      motor1.run(motor1power);
-    } else {
-      motor1.stop();
-    }
+    bluetooth.sendData(String(motor1target));
+    bluetooth.sendData(String(motor2target));
   }
   if (command.substring(0,1) == String("C")){
     switch (command[1]) {
       case 'S':
-        motor3.stop();
+        motor3target = 0;
         bluetooth.sendData("CRANE STOP");
         break;
       case 'L':
-        motor3.run(50);
+        motor3target = 50;
         bluetooth.sendData("CRANE LOWER");
         break;
       case 'R':
-        motor3.run(-50);
+        motor3target = -50;
         bluetooth.sendData("CRANE RAISE");
         break;
       default:
@@ -164,19 +156,100 @@ void proceedCommand(String command){
   if (command.substring(0,1) == String("P")){
     switch (command[1]) {
       case 'S':
-        motor4.stop();
+        motor4target = 0;
         bluetooth.sendData("PLIERS STOP");
         break;
       case 'O':
-        motor4.run(50);
+        motor4target = 150;
         bluetooth.sendData("PLIERS OPEN");
         break;
       case 'C':
-        motor4.run(-50);
+        motor4target = -150;
         bluetooth.sendData("PLIERS CLOSE");
         break;
       default:
         break;
     }
   }
+}
+
+void updateMotors(){
+  if (motor1target != motor1actual){
+    if (motor1target == 0){
+      motor1.stop();
+    } else {
+      motor1.run(motor1target)
+    }
+  }
+
+  if (motor2target != motor2actual){
+    if (motor2target == 0){
+      motor2.stop();
+    } else {
+      motor2.run(motor2target)
+    }
+  }
+
+  if (motor3target != motor3actual){
+    if (motor3target == 0){
+      motor3.stop();
+    } else {
+      motor3.run(motor3target)
+    }
+  }
+
+  if (motor4target != motor4actual){
+    if (motor4target == 0){
+      motor4.stop();
+    } else {
+      motor4.run(motor4target)
+    }
+  }
+
+  // Si un moteur de chenille a changé de sens
+  if ((motor1target * motor1actual < 0) || (motor2target * motor2actual < 0)){
+    motor1.stop(); // On arrête les moteurs des chenilles
+    motor2.stop();
+    restartMotorsAfterDelay = true; // Et on signale qu'il faut les redémarrer
+  }
+
+  motor1actual = motor1target;
+  motor2actual = motor2target;
+  motor3actual = motor3target;
+  motor4actual = motor4target;
+}
+
+void restartMotorsIfNeeded(){
+  if(restartMotorsAfterDelay){
+    delay(delayForMotorRestart);
+    if (motor1actual == 0){
+      motor1.stop();
+    } else {
+      motor1.run(motor1actual)
+    }
+    if (motor2actual == 0){
+      motor2.stop();
+    } else {
+      motor2.run(motor2actual)
+    }
+  }
+}
+
+
+//////////// ARDUINO RESERVED SETUP & LOOP FUNCTIONS /////////////////////
+
+void setup() {
+  Serial.begin(9600);
+  Serial3.begin(115200);
+  bluetooth.sendData("Booting");
+}
+
+void loop() {
+  restartMotorsIfNeeded();
+
+  manageCommands();
+
+  manageAutopilot();
+
+  updateMotors();
 }
