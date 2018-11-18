@@ -22,9 +22,10 @@ using WsServer = SimpleWeb::SocketServer<SimpleWeb::WS>;
 
 shared_ptr<WsServer::Connection> clientConnection;
 
+ofstream bluetooth;
+
 void sendMessageToIHM(string type, string message){
   if(clientConnection){
-    cout << message << endl;
     string jsonMessage = "{\"type\":\"" + type + "\",\"message\":\"" + message + "\"}";
     cout << "Sending to websocket : " << jsonMessage << endl;
     auto send_stream = make_shared<WsServer::SendStream>();
@@ -39,6 +40,11 @@ void sendMessageToIHM(string type, string message){
   }
 }
 
+void sendMessageToRobot(string message){
+  cout << "Sending to robot : " << message << endl;
+  bluetooth << message << endl;
+}
+
 int main() {
   cout << "Waiting for inputs . . ." << endl;
 
@@ -48,7 +54,6 @@ int main() {
   fd = open("/dev/input/by-id/usb-Microsoft_Controller_7EED87356C04-event-joystick", O_RDONLY);
   struct input_event ev;
 
-  ofstream bluetooth;
   bluetooth.open("/dev/rfcomm0");
 
   ifstream bluetoothReciever;
@@ -98,7 +103,7 @@ int main() {
     controllerEvent cevent = c1.getLastEvent();
     if (cevent.robotMessage != ""){
       sendMessageToIHM("controller", cevent.ihmMessage);
-      bluetooth << cevent.robotMessage << endl;
+      sendMessageToRobot(cevent.robotMessage);
     }
   }
 
