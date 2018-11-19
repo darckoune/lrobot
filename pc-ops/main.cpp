@@ -51,8 +51,8 @@ int main() {
   ofstream bluetooth;
   bluetooth.open("/dev/rfcomm0");
 
-  ifstream bluetoothReciever;
-  bluetoothReciever.open("/dev/rfcomm0");
+  // ifstream bluetoothReciever;
+  // bluetoothReciever.open("/dev/rfcomm0");
 
   WsServer server;
   server.config.port = 8080;

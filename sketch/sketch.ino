@@ -22,6 +22,7 @@ int previousSensorState = -1;
 float colorThreshold = 1;
 int colorDetected = 0;
 int detectionThreshold = 2;
+bool evenLoop = true;
 
 int motor1Target = 0;
 int motor1Actual = 0;
@@ -31,8 +32,9 @@ int motor3Target = 0;
 int motor3Actual = 0;
 int motor4Target = 0;
 int motor4Actual = 0;
+int waitedTime = 0;
 bool restartMotorsAfterDelay = false;
-int delayForMotorRestart = 75;
+int delayForMotorRestart = 100;
 
 uint8_t motorValue(float speed) {
   float secondsPerMinute = 60;
@@ -72,9 +74,8 @@ void manageAutopilot(){
           motor2Target = maxMotorValue;
           break;
         case S1_OUT_S2_OUT:
-          bluetooth.sendData("Au secours");
-          motor1Target = -maxMotorValue;
-          motor2Target = +maxMotorValue;
+          motor1Target = -maxMotorValue/3;
+          motor2Target = +maxMotorValue/3;
           break;
         default:
           break;
@@ -174,64 +175,70 @@ void proceedCommand(String command){
 }
 
 void updateMotors(){
-  if (motor1Target != motor1Actual){
-    if (motor1Target == 0){
-      motor1.stop();
-    } else {
-      motor1.run(motor1Target);
-    } 
-  }
-
-  if (motor2Target != motor2Actual){
-    if (motor2Target == 0){
+  if(waitedTime < millis()){
+    if (motor1Target != motor1Actual){
+      if (motor1Target == 0){
+        motor1.run(0);
+      } else {
+        motor1.run(motor1Target);
+        bluetooth.sendData("New motor speed : " + String(motor1Target));
+      } 
+    }
+  
+    if (motor2Target != motor2Actual){
+      if (motor2Target == 0){
+        motor2.run(0);
+      } else {
+        motor2.run(motor2Target);
+      }
+    }
+  
+    if (motor3Target != motor3Actual){
+      if (motor3Target == 0){
+        motor3.stop();
+      } else {
+        motor3.run(motor3Target);
+      }
+    }
+  
+    if (motor4Target != motor4Actual){
+      if (motor4Target == 0){
+        motor4.stop();
+      } else {
+        motor4.run(motor4Target);
+      }
+    }
+  
+    // Si un moteur de chenille a changé de sens
+    if ((motor1Target < 0 != motor1Actual < 0) || (motor2Target < 0 != motor2Actual < 0)){
+      bluetooth.sendData("Change de sens : " + String(motor1Target < 0 != motor1Actual < 0));
+      motor1.stop(); // On arrête les moteurs des chenilles
       motor2.stop();
-    } else {
-      motor2.run(motor2Target);
+      waitedTime = millis() + delayForMotorRestart;
+      restartMotorsAfterDelay = true; // Et on signale qu'il faut les redémarrer
     }
+  
+    motor1Actual = motor1Target;
+    motor2Actual = motor2Target;
+    motor3Actual = motor3Target;
+    motor4Actual = motor4Target;
   }
-
-  if (motor3Target != motor3Actual){
-    if (motor3Target == 0){
-      motor3.stop();
-    } else {
-      motor3.run(motor3Target);
-    }
-  }
-
-  if (motor4Target != motor4Actual){
-    if (motor4Target == 0){
-      motor4.stop();
-    } else {
-      motor4.run(motor4Target);
-    }
-  }
-
-  // Si un moteur de chenille a changé de sens
-  if ((motor1Target * motor1Actual < 0) || (motor2Target * motor2Actual < 0)){
-    motor1.stop(); // On arrête les moteurs des chenilles
-    motor2.stop();
-    restartMotorsAfterDelay = true; // Et on signale qu'il faut les redémarrer
-  }
-
-  motor1Actual = motor1Target;
-  motor2Actual = motor2Target;
-  motor3Actual = motor3Target;
-  motor4Actual = motor4Target;
 }
 
 void restartMotorsIfNeeded(){
-  if(restartMotorsAfterDelay){
-    delay(delayForMotorRestart);
+  if(restartMotorsAfterDelay && waitedTime < millis()){
     if (motor1Actual == 0){
       motor1.stop();
     } else {
       motor1.run(motor1Actual);
+      bluetooth.sendData(String(motor1Actual));
     }
     if (motor2Actual == 0){
       motor2.stop();
     } else {
       motor2.run(motor2Actual);
     }
+    restartMotorsAfterDelay = false;
   }
 }
 
@@ -252,4 +259,6 @@ void loop() {
   manageAutopilot();
 
   updateMotors();
+
+  evenLoop = !evenLoop;
 }
