@@ -22,7 +22,6 @@ int previousSensorState = -1;
 float colorThreshold = 1;
 int colorDetected = 0;
 int detectionThreshold = 2;
-bool evenLoop = true;
 
 int motor1Target = 0;
 int motor1Actual = 0;
@@ -32,7 +31,7 @@ int motor3Target = 0;
 int motor3Actual = 0;
 int motor4Target = 0;
 int motor4Actual = 0;
-int waitedTime = 0;
+long waitedTime = 0;
 bool restartMotorsAfterDelay = false;
 int delayForMotorRestart = 100;
 
@@ -47,6 +46,7 @@ uint8_t motorValue(float speed) {
 //////////// Robot control functions ///////////////////////
 
 void autoPilotStop() {
+  bluetooth.sendData("Disable autopilot");
   autoPilot = false;
   motor1Target = 0;
   motor2Target = 0;
@@ -58,7 +58,6 @@ void autoPilotStop() {
 void manageAutopilot(){
   if (autoPilot) {
     int sensorState = lineFinder.readSensors();
-    
     if (sensorState != previousSensorState) {
       switch(sensorState) {
         case S1_IN_S2_IN:
@@ -118,12 +117,15 @@ void manageCommands(){
 void proceedCommand(String command){
   bluetooth.sendData("Proceeding command... (" + command +")");
   if (command.substring(0,2) == String("A")){
+    bluetooth.sendData("SWITCH !");
     if (autoPilot){
       autoPilotStop();
-      bluetooth.sendData("SWITCH !");
     } else {
       autoPilot = true;
     }
+  }
+  if(autoPilot){
+    return;
   }
   if (command.substring(0,1) == String("M")){
     bluetooth.sendData("MOVING");
@@ -132,6 +134,9 @@ void proceedCommand(String command){
     
     motor1Target = -power - turn;
     motor2Target = power - turn;
+
+    bluetooth.sendData("Y : " + String(power));
+    bluetooth.sendData("X : " + String(turn));
 
     bluetooth.sendData(String(motor1Target));
     bluetooth.sendData(String(motor2Target));
@@ -171,6 +176,28 @@ void proceedCommand(String command){
       default:
         break;
     }
+  }
+  if (command.substring(0,1) == String("R")){
+    int way = 0;
+    switch (command[1]) {
+      case 'R':
+        way = -1;
+        break;
+      case 'L':
+        way = 1;
+        break;
+      default:
+        way = 0;
+        break;
+    }
+    motor1.run(way * maxMotorValue);
+    motor2.run(way * maxMotorValue);
+    waitedTime = millis() + 4000;
+    restartMotorsAfterDelay = true;
+    motor1Target = 0;
+    motor2Target = 0;
+    motor1Actual = 0;
+    motor2Actual = 0;
   }
 }
 
@@ -257,8 +284,6 @@ void loop() {
   manageCommands();
 
   manageAutopilot();
-
+  
   updateMotors();
-
-  evenLoop = !evenLoop;
 }

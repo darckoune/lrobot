@@ -98,6 +98,7 @@ int main() {
     controllerEvent cevent = c1.getLastEvent();
     if (cevent.robotMessage != ""){
       sendMessageToIHM("controller", cevent.ihmMessage);
+      cout << cevent.robotMessage << endl;
       bluetooth << cevent.robotMessage << endl;
     }
   }
