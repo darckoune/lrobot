@@ -19,7 +19,6 @@ MeRGBLed led(PORT_7);
 bool autoPilot = true;
 uint8_t maxMotorValue = 255;
 int previousSensorState = -1;
-float colorThreshold = 1;
 int colorDetected = 0;
 int detectionThreshold = 2;
 
@@ -82,25 +81,33 @@ void manageAutopilot(){
       
       previousSensorState = sensorState;
     }
+
+    int colorValue = 0;
     
     led.setColor(255, 0, 0);
     led.show();
-    int colorValue = lightSensor.read();
+    colorValue += lightSensor.read();
     
-    led.setColor(0, 255, 255);
+    led.setColor(0, 255, 0);
     led.show();
-    int oppositeColorValue = lightSensor.read();
-  
-    /*if (colorValue > colorThreshold * oppositeColorValue) {
-      colorDetected++;
+    colorValue += lightSensor.read();
 
+    led.setColor(0, 0, 255);
+    led.show();
+    colorValue += lightSensor.read();
+  
+    if (colorValue > 2880 && colorValue < 2890) {
       if (colorDetected >= detectionThreshold) {
-        autoPilotStop();
+        Serial3.println(colorDetected);
+        Serial3.println(colorValue);
+      }
+      else {
+        colorDetected++;
       }
     }
     else {
       colorDetected = 0;
-    }*/
+    }
   }
 }
 
