@@ -43,8 +43,6 @@ window.onclose=function(){
     ws.close();
 }
 
-
-// Pour controler le comportement du websocket, redéfinir onWebsocket
 onWebsocket = function(data){
     console.log(data);
     onWebsocketCallbacks.forEach((callback) => {

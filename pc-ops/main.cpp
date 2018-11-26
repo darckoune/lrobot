@@ -25,10 +25,12 @@ vector<shared_ptr<WsServer::Connection>> connections;
 ofstream bluetooth;
 
 void sendMessageToIHM(string type, string message){
+  string jsonMessage = "{\"type\":\"" + type + "\",\"message\":\"" + message + "\"}";
+  cout << "Sending to " << connections.size() << " websocket(s) : " << jsonMessage << endl;
+
   for(std::vector<int>::size_type i = 0; i != connections.size(); i++) {
+
     shared_ptr<WsServer::Connection> connection = connections[i];
-    string jsonMessage = "{\"type\":\"" + type + "\",\"message\":\"" + message + "\"}";
-    cout << "Sending to websocket : " << jsonMessage << endl;
     auto send_stream = make_shared<WsServer::SendStream>();
     *send_stream << jsonMessage;
 
@@ -53,7 +55,7 @@ void listenToBluetooth(){
   ifstream bluetoothReciever ("/dev/pts/4", ifstream::binary);
   while(1){
     getline(bluetoothReciever, data);
-    sendMessageToIHM("robot", "SPEED:" + data);
+    sendMessageToIHM("robot", data);
   }
 }
 
@@ -102,6 +104,7 @@ int main(int argc, char* argv[]) {
   // See RFC 6455 7.4.1. for status codes
   echo.on_close = [](shared_ptr<WsServer::Connection> connection, int status, const string & /*reason*/) {
     cout << "Server: Closed connection " << connection.get() << " with status code " << status << endl;
+    connections.erase(std::remove(connections.begin(), connections.end(), connection), connections.end());
   };
 
   thread server_thread([&server]() {
