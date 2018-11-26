@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>ROBAFIS</title>
+
+  <script src="lib/jquery-1.11.1.min.js"></script>
+  <script src="lib/jqmeter.min.js"></script>
+  <script src="lib/jquery-ui.min.js"></script>
+  <script src="lib/easytimer.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
+  <link href="style/jquery-ui.min.css" rel="stylesheet" type="text/css" />
+  <link href="style/pc_ops_interface.css" rel="stylesheet" type="text/css" />
+  <link href="style/speedmeter.css" rel="stylesheet" type="text/css" />
+  <link href="style/direction.css" rel="stylesheet" type="text/css" />
+  <link href="style/chronometer.css" rel="stylesheet" type="text/css" />
+  <link href="style/clock.css" rel="stylesheet" type="text/css" />
+  <link href="style/menu.css" rel="stylesheet" type="text/css" />
+  <link href="style/gamepad.css" rel="stylesheet" type="text/css" />
+  <link href="style/gripper.css" rel="stylesheet" type="text/css" />
+  <link href="style/speedLimit.css" rel="stylesheet" type="text/css" />
+  <link href="style/toggleButton.css" rel="stylesheet" type="text/css" />
+  <script src="js/pc_ops_interface.js"></script>
+  <script src="js/direction.js"></script>
+  <script src="js/chronometer.js"></script>
+  <script src="js/clock.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/joy.js"></script>
+  <script src="js/gamepad.js"></script>
+  <script src="js/gripper.js"></script>
+  <script src="js/speedLimit.js"></script>
+  <script src="js/toggleButton.js"></script>
+</head>
+<body>
+    <div class="row">
+      <div class="col-lg-1">
+        <img src="img/bluetooth.png" id="bluetooth">
+      </div>
+      <div class="col-lg-9">
+        <h1 class="title1">PC OP'S</h1>
+      </div>
+      <div class="col-lg-1">
+        <div id="clocktext"></div>
+      </div>
+      <div class="col-lg-1">
+        <div id="chronometer">00:00:00</div>
+      </div>
+    </div>
+    <img id="imageRobot" src="img/robot-icon.png"></img>
+    <hr>
+    <div class="row">
+      <div class="col-lg-3">
+        <div id="circle"></div>
+        <div id="arrow"></div>
+      </div>
+      <div class="col-lg-1">
+        <div class="vprogress">
+          <span class="bar done"></span>
+          <div id="circle6" class="circle">
+            <span id = '6' class="label" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">6</span>
+          </div>
+          <span class="bar done"></span>
+          <div id="circle5" class="circle">
+            <span id = '5' class="label" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">5</span>
+          </div>
+          <span class="bar done"></span>
+          <div id="circle4" class="circle">
+            <span id = '4' class="label" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">4</span>
+          </div>
+          <span class="bar done"></span>
+          <div id="circle3" class="circle">
+            <span id = '3' class="label" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">3</span>
+          </div>
+          <span class="bar done"></span>
+          <div id="circle2" class="circle">
+            <span id = '2' class="label" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">2</span>
+          </div>
+          <span class="bar done"></span>
+          <div id="circle1" class="circle">
+            <span id = '1' class="label" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">1</span>
+          </div>
+          <span class="bar done"></span>
+        </div>
+      </div>
+      <div class="col-lg-8">
+        <div class="row">
+          <nav class="mynav">
+            <ul>
+              <li id="ihmPilot"><a href="">IHM PILOT</a><span></span></li>
+              <li id="ihmMani"><a href="">IHM MANU</a></li>
+            </ul>
+          </nav>
+          <span class="target"></span>
+        </div>
+        <div class="row">
+          <div class="col-lg-1"></div>
+          <div class="col-lg-4">
+            <div class="name">Manette</div>
+              <div id="joyDiv"></div>
+              <!-- Posizione X:<input id="posizioneX" type="text" /></br>
+              Posizione Y:<input id="posizioneY" type="text" /></br>
+              Direzione:<input id="direzione" type="text" /></br>
+              X :<input id="X" type="text" /></br>
+              Y :<input id="Y" type="text" /> -->
+              <img id="gamepadImg" src="img/xbox-controller.png" alt="gamepad">
+          </div>
+          <div class="col-lg-6">
+            <div class="name">Bras mécanique</div></br>
+            <div class="name">Pince</div>
+            <div id="gripper"></div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-1"></div>
+          <div class="col-lg-5">
+            <div class="name">Mode</div>
+            <div class="can-toggle demo-rebrand-2">
+              <input id="e" type="checkbox">
+              <label for="e">
+                <div class="can-toggle__switch" data-checked="Yes" data-unchecked="No"></div>
+              </label>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div id ="nomSpeed" class="name">Bras en cours <br>
+              d'utilisation</div>
+            <div id="jqmeter-container"></div>
+          </div>
+        </div>
+      </div>
+  <script src="lib/circle-progress.js"></script>
+  <script src="js/speedmeter.js"></script>
+</body>
+</html>

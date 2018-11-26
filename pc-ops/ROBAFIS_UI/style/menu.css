@@ -1,16 +1,16 @@
   .mynav ul {
     display: flex;
-    justify-content: center;
+    /* justify-content: center; */
     flex-wrap: wrap;
     list-style-type: none;
-    padding: 0;
+    margin-left: 200px;
   }
-  
-  /*.mynav li {
-    margin-right: 10px;
-    margin-left: 10px;
-  }*/
-  
+
+  .mynav li {
+    margin-right: 150px; !
+    margin-left: 40px;
+  }
+
   .mynav a {
     display: block;
     font-size: 20px;
@@ -18,23 +18,23 @@
     text-decoration: none;
     padding: 7px 15px;
   }
-  
+
   .target {
-    position: absolute;
+    position: fixed;
     border-bottom: 4px solid transparent;
     z-index: -1;
     border-color: #ffffff;
     -webkit-transform: translateX(-60px);
             transform: translateX(-60px);
   }
-  
+
   .mynav a,
   .target {
     transition: all .35s ease-in-out;
   }
 
   .mynav span {
-    position: absolute;
+    position: fixed;
     border-bottom: 2px solid transparent;
     border-color: #5f6c77;
     z-index: -1;

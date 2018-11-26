@@ -24,17 +24,17 @@ $(document).ready(function(){
 		externalStrokeColor : '#008000'
   });
 
-  var inputPosX = document.getElementById("posizioneX");
-  var inputPosY = document.getElementById("posizioneY");
-  var direzione = document.getElementById("direzione");
-  var x = document.getElementById("X");
-  var y = document.getElementById("Y");
-
-  setInterval(function(){ inputPosX.value=joy1.GetPosX(); }, 50);
-  setInterval(function(){ inputPosY.value=joy1.GetPosY(); }, 50);
-  setInterval(function(){ direzione.value=joy1.GetDir(); }, 50);
-  setInterval(function(){ x.value=joy1.GetX(); }, 50);
-  setInterval(function(){ y.value=joy1.GetY(); }, 50);
+  // var inputPosX = document.getElementById("posizioneX");
+  // var inputPosY = document.getElementById("posizioneY");
+  // var direzione = document.getElementById("direzione");
+  // var x = document.getElementById("X");
+  // var y = document.getElementById("Y");
+  //
+  // setInterval(function(){ inputPosX.value=joy1.GetPosX(); }, 50);
+  // setInterval(function(){ inputPosY.value=joy1.GetPosY(); }, 50);
+  // setInterval(function(){ direzione.value=joy1.GetDir(); }, 50);
+  // setInterval(function(){ x.value=joy1.GetX(); }, 50);
+  // setInterval(function(){ y.value=joy1.GetY(); }, 50);
 
   (function test() {
     setTimeout(function() {

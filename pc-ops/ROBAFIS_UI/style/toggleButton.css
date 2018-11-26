@@ -1,7 +1,9 @@
-  
+
   .can-toggle {
     position: relative;
     width: 120px;
+    margin-top: 70px;
+    margin-left: 100px;
   }
   .can-toggle *, .can-toggle *:before, .can-toggle *:after {
     box-sizing: border-box;
@@ -111,7 +113,7 @@
   .can-toggle.demo-rebrand-2 label .can-toggle__switch:hover:after {
     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.4);
   }
-  
+
   /*
 
   */
@@ -168,4 +170,3 @@
   .switch input[type="radio"]:not(:checked), .switch input[type="radio"]:checked {
     display: none;
   }
-  

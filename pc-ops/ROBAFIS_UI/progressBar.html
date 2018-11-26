@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta charset="utf-8" />
+  <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
+  <link rel="stylesheet" href="pc_ops_interface.css">
+  <title>Progress bar</title>
+  <style>
+
+    </style>
+</head>
+<body>
+<div class="vprogress">
+  <span class="bar done"></span>
+  <div id="circle6" class="circle">
+    <span id = '6' class="label" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">6</span>
+  </div>
+  <span class="bar done"></span>
+  <div id="circle5" class="circle">
+    <span id = '5' class="label" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">5</span>
+  </div>
+  <span class="bar done"></span>
+  <div id="circle4" class="circle">
+    <span id = '4' class="label" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">4</span>
+  </div>
+  <span class="bar done"></span>
+  <div id="circle3" class="circle">
+    <span id = '3' class="label" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">3</span>
+  </div>
+  <span class="bar done"></span>
+  <div id="circle2" class="circle">
+    <span id = '2' class="label" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">2</span>
+  </div>
+  <span class="bar done"></span>
+  <div id="circle1" class="circle">
+    <span id = '1' class="label" data-toggle="popover" title="Popover Header" data-content="Some content inside the popover">1</span>
+  </div>
+  <span class="bar done"></span>
+</div>
+ <script>
+  function valideEtat(etat) {
+    for(i = etat ; i >= 0 ; i--) {
+      $('#'+i).html('&#10003;');
+      $('#'+i).css('background-color', 'green');
+      $('#circle'+i).css('background-color', 'green');
+    }
+  }
+
+  function init() {
+    for(i = 6 ; i >= 0 ; i--) {
+      $('#'+i).html(i);
+      $('#'+i).css('background-color', '#075C93');
+      $('#circle'+i).css('background-color', '#075C93');
+    }
+  }
+ </script>
+</body>
+</html>
+<!-- mis dans le home -->
