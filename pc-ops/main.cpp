@@ -65,7 +65,7 @@ int main() {
   struct input_event ev;
 
   bluetooth.open("/dev/rfcomm0");
-
+  
   WsServer server;
   server.config.port = 8080;
   auto &echo = server.endpoint["^/?$"];

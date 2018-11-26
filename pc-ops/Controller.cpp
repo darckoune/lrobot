@@ -83,39 +83,35 @@ controllerEvent Controller::getLastEvent() {
   }
   if (DPAD_V.changed){
     DPAD_V.changed = false;
-    event.robotMessage = "C";
-    event.ihmMessage = "CRANE:";
     switch(DPAD_V.value){
       case 0:
-        event.robotMessage += "S";
-        event.ihmMessage += "STOP";
+        event.robotMessage += "CS";
+        event.ihmMessage += "CRANE:STOP";
         break;
       case 1:
-        event.robotMessage += "L";
-        event.ihmMessage += "LOWER";
+        event.robotMessage += "CL";
+        event.ihmMessage += "CRANE:LOWER";
         break;
       case -1:
-        event.robotMessage += "R";
-        event.ihmMessage += "RAISE";
+        event.robotMessage += "CR";
+        event.ihmMessage += "CRANE:RAISE";
         break;
     }
   }
   if (DPAD_H.changed){
     DPAD_H.changed = false;
-    event.robotMessage += "P";
-    event.ihmMessage += "PLIERS:";
     switch(DPAD_H.value){
       case 0:
-        event.robotMessage += "S";
-        event.ihmMessage += "STOP";
+        event.robotMessage += "PS";
+        event.ihmMessage += "PLIERS:STOP";
         break;
       case 1:
-        event.robotMessage += "O";
-        event.ihmMessage += "OPEN";
+        event.robotMessage += "RR";
+        event.ihmMessage += "REVERSE:RIGHT";
         break;
       case -1:
-        event.robotMessage += "C";
-        event.ihmMessage += "CLOSE";
+        event.robotMessage += "RL";
+        event.ihmMessage += "REVERSE:LEFT";
         break;
     }
   }
