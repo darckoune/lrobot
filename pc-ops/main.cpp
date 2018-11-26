@@ -22,9 +22,10 @@ using WsServer = SimpleWeb::SocketServer<SimpleWeb::WS>;
 
 shared_ptr<WsServer::Connection> clientConnection;
 
+ofstream bluetooth;
+
 void sendMessageToIHM(string type, string message){
   if(clientConnection){
-    cout << message << endl;
     string jsonMessage = "{\"type\":\"" + type + "\",\"message\":\"" + message + "\"}";
     cout << "Sending to websocket : " << jsonMessage << endl;
     auto send_stream = make_shared<WsServer::SendStream>();
@@ -39,6 +40,21 @@ void sendMessageToIHM(string type, string message){
   }
 }
 
+void sendMessageToRobot(string message){
+  cout << "Sending to robot : " << message << endl;
+  bluetooth << message << endl;
+}
+
+
+void listenToBluetooth(){
+  string data;
+  ifstream bluetoothReciever ("/dev/rfcomm0", ifstream::binary);
+  while(1){
+    getline(bluetoothReciever, data);
+    sendMessageToIHM("robot", "SPEED:" + data);
+  }
+}
+
 int main() {
   cout << "Waiting for inputs . . ." << endl;
 
@@ -48,12 +64,8 @@ int main() {
   fd = open("/dev/input/by-id/usb-Microsoft_Controller_7EED87356C04-event-joystick", O_RDONLY);
   struct input_event ev;
 
-  ofstream bluetooth;
   bluetooth.open("/dev/rfcomm0");
-
-  // ifstream bluetoothReciever;
-  // bluetoothReciever.open("/dev/rfcomm0");
-
+  
   WsServer server;
   server.config.port = 8080;
   auto &echo = server.endpoint["^/?$"];
@@ -78,19 +90,13 @@ int main() {
 
     cout << "Server: Message received: \"" << message_str << "\" from " << connection.get() << endl;
 
-    cout << "Server: Sending message \"" << message_str << "\" to " << connection.get() << endl;
-
-    auto send_stream = make_shared<WsServer::SendStream>();
-    *send_stream << message_str;
-    // connection->send is an asynchronous function
-    connection->send(send_stream, [](const SimpleWeb::error_code &ec) {
-      if(ec) {
-        cout << "Server: Error sending message. " <<
-            // See http://www.boost.org/doc/libs/1_55_0/doc/html/boost_asio/reference.html, Error Codes for error code meanings
-            "Error: " << ec << ", error message: " << ec.message() << endl;
-      }
-    });
   };
+
+  std::thread t{listenToBluetooth};
+
+  //////////////////////////////////////////////
+  //////////////// MAIN LOOP ///////////////////
+  //////////////////////////////////////////////
 
   while (1) {
     read(fd, &ev, sizeof(struct input_event));
@@ -98,8 +104,7 @@ int main() {
     controllerEvent cevent = c1.getLastEvent();
     if (cevent.robotMessage != ""){
       sendMessageToIHM("controller", cevent.ihmMessage);
-      cout << cevent.robotMessage << endl;
-      bluetooth << cevent.robotMessage << endl;
+      sendMessageToRobot(cevent.robotMessage);
     }
   }
 

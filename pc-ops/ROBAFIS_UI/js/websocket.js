@@ -16,7 +16,7 @@ function setupSocket(){
         }
     };
     websocket.onopen=function(evt){
-        websocket.send("Connection !");
+        console.log("Connected to server websocket !")
     };
     websocket.onclose=function(evt){
         setTimeout(() => {
