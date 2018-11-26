@@ -55,7 +55,29 @@ void listenToBluetooth(){
   }
 }
 
-int main() {
+void openBrowser(int argc, char* argv[]){
+  struct stat sb;
+    char *linkname;
+    ssize_t r;
+
+   linkname = (char*) malloc(500);
+   r = readlink("/proc/self/exe", linkname, 500);
+
+   printf("'%s'\n", linkname);
+   string path = string(linkname);
+
+   size_t i = path.rfind('/', path.length());
+   if (i != string::npos) {
+      path = path.substr(0, i);
+   }
+
+   cout << path << endl;
+    system(("firefox file://" + path + "/ROBAFIS_UI/pc_ops_interface.html").c_str());
+}
+
+int main(int argc, char* argv[]) {
+  openBrowser(argc, argv);
+
   cout << "Waiting for inputs . . ." << endl;
 
   Controller c1;

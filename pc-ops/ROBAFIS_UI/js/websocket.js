@@ -2,6 +2,9 @@ var websocket;
 var onWebsocket;
 
 function setupSocket(){
+    if(onWebsocket){
+        onWebsocket({type:"socket", "message":"CONNECTING"});
+    }
     websocket = new WebSocket("ws://localhost:8080/");
     websocket.onmessage = function(evt){
         if(onWebsocket){
@@ -16,9 +19,14 @@ function setupSocket(){
         }
     };
     websocket.onopen=function(evt){
-        console.log("Connected to server websocket !")
+        if(onWebsocket){
+            onWebsocket({type:"socket", "message":"CONNECTED"});
+        }
     };
     websocket.onclose=function(evt){
+        if(onWebsocket){
+            onWebsocket({type:"socket", "message":"DISCONNECTED"});
+        }
         setTimeout(() => {
             setupSocket();
         }, 50);
