@@ -20,17 +20,19 @@ using namespace std;
 
 using WsServer = SimpleWeb::SocketServer<SimpleWeb::WS>;
 
-shared_ptr<WsServer::Connection> clientConnection;
+vector<shared_ptr<WsServer::Connection>> connections;
 
 ofstream bluetooth;
 
 void sendMessageToIHM(string type, string message){
-  if(clientConnection){
+  for(std::vector<int>::size_type i = 0; i != connections.size(); i++) {
+    shared_ptr<WsServer::Connection> connection = connections[i];
     string jsonMessage = "{\"type\":\"" + type + "\",\"message\":\"" + message + "\"}";
     cout << "Sending to websocket : " << jsonMessage << endl;
     auto send_stream = make_shared<WsServer::SendStream>();
     *send_stream << jsonMessage;
-    clientConnection->send(send_stream, [](const SimpleWeb::error_code &ec) {
+
+    connection->send(send_stream, [](const SimpleWeb::error_code &ec) {
       if(ec) {
         cout << "Server: Error sending message. " <<
             // See http://www.boost.org/doc/libs/1_55_0/doc/html/boost_asio/reference.html, Error Codes for error code meanings
@@ -48,7 +50,7 @@ void sendMessageToRobot(string message){
 
 void listenToBluetooth(){
   string data;
-  ifstream bluetoothReciever ("/dev/rfcomm0", ifstream::binary);
+  ifstream bluetoothReciever ("/dev/pts/4", ifstream::binary);
   while(1){
     getline(bluetoothReciever, data);
     sendMessageToIHM("robot", "SPEED:" + data);
@@ -94,7 +96,7 @@ int main(int argc, char* argv[]) {
 
   echo.on_open = [](shared_ptr<WsServer::Connection> connection) {
     cout << "Server: Opened connection " << connection.get() << endl;
-    clientConnection = connection;
+    connections.push_back(connection);
   };
 
   // See RFC 6455 7.4.1. for status codes
