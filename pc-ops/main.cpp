@@ -45,6 +45,16 @@ void sendMessageToRobot(string message){
   bluetooth << message << endl;
 }
 
+
+void listenToBluetooth(){
+  string data;
+  ifstream bluetoothReciever ("/dev/rfcomm0", ifstream::binary);
+  while(1){
+    getline(bluetoothReciever, data);
+    sendMessageToIHM("robot", "SPEED:" + data);
+  }
+}
+
 int main() {
   cout << "Waiting for inputs . . ." << endl;
 
@@ -55,9 +65,6 @@ int main() {
   struct input_event ev;
 
   bluetooth.open("/dev/rfcomm0");
-
-  ifstream bluetoothReciever;
-  bluetoothReciever.open("/dev/rfcomm0");
 
   WsServer server;
   server.config.port = 8080;
@@ -96,6 +103,8 @@ int main() {
       }
     });
   };
+
+  std::thread t{listenToBluetooth};
 
   while (1) {
     read(fd, &ev, sizeof(struct input_event));
