@@ -1,5 +1,7 @@
 var websocket;
 var onWebsocket;
+var onWebsocketCallbacks = [];
+
 
 function setupSocket(){
     if(onWebsocket){
@@ -45,4 +47,11 @@ window.onclose=function(){
 // Pour controler le comportement du websocket, redéfinir onWebsocket
 onWebsocket = function(data){
     console.log(data);
+    onWebsocketCallbacks.forEach((callback) => {
+        callback(data);
+    });
+}
+
+function addWebsocketCallback(callback){
+    onWebsocketCallbacks.push(callback);
 }
