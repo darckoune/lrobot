@@ -33,6 +33,8 @@
   <script src="js/gripper.js"></script>
   <script src="js/speedLimit.js"></script>
   <script src="js/toggleButton.js"></script>
+  <script src="js/lineFollower.js"></script>
+  <script src="js/colorDetection.js"></script>
 </head>
 <body>
     <div class="row">
@@ -108,9 +110,12 @@
               <img id="gamepadImg" src="img/xbox-controller.png" alt="gamepad">
           </div>
           <div class="col-lg-6">
-            <div class="name">Bras mécanique</div></br>
-            <div class="name">Pince</div>
-            <div id="gripper"></div>
+            <div id="pince" style="display:none;">
+              <div class="name">Bras mécanique</div></br>
+              <div class="name">Pince</div>
+              <div id="gripper"></div>
+            </div>
+            <div id="colorDetection" ></div>
           </div>
         </div>
         <div class="row">
@@ -125,9 +130,12 @@
             </div>
           </div>
           <div class="col-lg-6">
-            <div id ="nomSpeed" class="name">Bras en cours <br>
-              d'utilisation</div>
-            <div id="jqmeter-container"></div>
+            <div id="bras" style="display:none;">
+              <div id ="nomSpeed" class="name">Bras en cours <br>
+                d'utilisation</div>
+              <div id="jqmeter-container"></div>
+            </div>
+            <div id="lineFollower"></div>
           </div>
         </div>
       </div>

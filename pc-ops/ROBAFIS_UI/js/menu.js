@@ -1,8 +1,27 @@
+addWebsocketCallback(function(data){
+  if(data.type == "controller") {
+    var str = data.message;
+    if(str == "AUTOPILOT") {
+
+      console.log(Ihm);
+      var links = document.querySelectorAll(".mynav a");
+      if(Ihm == "PILOT") {
+        links[0].click();
+        Ihm = "MANU";
+      } else {
+        links[1].click();
+        Ihm = "PILOT";
+      }
+    }
+  }
+
+});
+
 $(document).ready(function(){
     var target = document.querySelector(".target");
     var links = document.querySelectorAll(".mynav a");
     var li = document.querySelectorAll(".mynav li");
-  
+
     target.style.borderColor = "#02948A";
 
     const margin = 40;
@@ -41,12 +60,12 @@ $(document).ready(function(){
         this.parentNode.classList.add("active");
         //this.style.opacity = "1";
         //this.style.color = "#FFFFFF";
-  
+
         var width = this.getBoundingClientRect().width + margin * 2;
         var height = this.getBoundingClientRect().height;
         var left = this.getBoundingClientRect().left + window.pageXOffset - margin;
         var top = this.getBoundingClientRect().top + window.pageYOffset;
-  
+
         target.style.width = width + "px";
         target.style.height = height + "px";
         target.style.left = left + "px";
@@ -54,19 +73,19 @@ $(document).ready(function(){
         target.style.transform = "none";
       }
     }
-  
+
     for (var i = 0; i < links.length; i++) {
       links[i].addEventListener("click", function (e) {return e.preventDefault();});
-      links[i].addEventListener("mouseenter", mouseenterFunc);
+      links[i].addEventListener("click", mouseenterFunc);
     }
-  
+
     function resizeFunc() {
       var active = document.querySelector(".mynav li.active");
-  
+
       if (active) {
         var left = active.getBoundingClientRect().left + window.pageXOffset;
         var top = active.getBoundingClientRect().top + window.pageYOffset;
-  
+
         target.style.left = left + "px";
         target.style.top = top + "px";
       }
@@ -79,6 +98,6 @@ $(document).ready(function(){
         span.style.top = top + 1 + "px";
       }*/
     }
-  
+
     window.addEventListener("resize", resizeFunc);
 });

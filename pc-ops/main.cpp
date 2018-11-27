@@ -52,7 +52,7 @@ void sendMessageToRobot(string message){
 
 void listenToBluetooth(){
   string data;
-  ifstream bluetoothReciever ("/dev/pts/4", ifstream::binary);
+  ifstream bluetoothReciever ("/dev/pts/3", ifstream::binary);
   while(1){
     getline(bluetoothReciever, data);
     sendMessageToIHM("robot", data);
@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
   struct input_event ev;
 
   bluetooth.open("/dev/rfcomm0");
-  
+
   WsServer server;
   server.config.port = 8080;
   auto &echo = server.endpoint["^/?$"];
