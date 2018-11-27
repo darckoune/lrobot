@@ -2,6 +2,7 @@
 #include <MeMegaPi.h>
 #include <ArduinoSTL.h>
 #include <math.h>
+#include <queue>
 
 using namespace std;
 
@@ -19,8 +20,12 @@ MeRGBLed led(PORT_7);
 bool autoPilot = true;
 uint8_t maxMotorValue = 255;
 int previousSensorState = -1;
-int colorDetected = 0;
-int detectionThreshold = 2;
+queue<float> yellowDetection;
+queue<float> redDetection;
+queue<float> greenDetection;
+float yellowSum = 0;
+float redSum = 0;
+float greenSum = 0;
 
 int motor1Target = 0;
 int motor1Actual = 0;
@@ -51,7 +56,20 @@ void autoPilotStop() {
   motor2Target = 0;
   led.setColor(0, 0, 0);
   led.show();
-  colorDetected = 0;
+}
+
+void updateQueue(queue<float>& queue, float& sum, float value) {
+  sum += value;
+  queue.push(value);
+
+  if (queue.size() > 100) {
+    sum -= queue.front();
+    queue.pop();
+  }
+}
+
+float getValue(queue<float> queue, float sum) {
+  return (1.0 - sum / queue.size()) * 10000.0;
 }
 
 void manageAutopilot(){
@@ -64,12 +82,12 @@ void manageAutopilot(){
           motor2Target = -maxMotorValue;
           break;
         case S1_IN_S2_OUT:
-          motor1Target = -maxMotorValue;
-          motor2Target = -maxMotorValue;
-          break;
-        case S1_OUT_S2_IN:
           motor1Target = maxMotorValue;
           motor2Target = maxMotorValue;
+          break;
+        case S1_OUT_S2_IN:
+          motor1Target = -maxMotorValue;
+          motor2Target = -maxMotorValue;
           break;
         case S1_OUT_S2_OUT:
           motor1Target = -maxMotorValue/3;
@@ -81,32 +99,42 @@ void manageAutopilot(){
       
       previousSensorState = sensorState;
     }
-
-    int colorValue = 0;
     
-    led.setColor(255, 0, 0);
+    led.setColor(255, 255, 0);
     led.show();
-    colorValue += lightSensor.read();
-    
-    led.setColor(0, 255, 0);
-    led.show();
-    colorValue += lightSensor.read();
+    float yellowValue = lightSensor.read();
 
     led.setColor(0, 0, 255);
     led.show();
-    colorValue += lightSensor.read();
+    float blueValue = lightSensor.read();
+
+    updateQueue(yellowDetection, yellowSum, yellowValue / blueValue);
+    bool yellowDetected = getValue(yellowDetection, yellowSum) < -80;
+
+    led.setColor(255, 0, 0);
+    led.show();
+    float redValue = lightSensor.read();
+
+    led.setColor(0, 255, 255);
+    led.show();
+    float cyanValue = lightSensor.read();
+
+    updateQueue(redDetection, redSum, redValue / cyanValue);
+    bool redDetected = getValue(redDetection, redSum) < -25;
+
+    led.setColor(0, 255, 0);
+    led.show();
+    float greenValue = lightSensor.read();
+
+    led.setColor(255, 0, 255);
+    led.show();
+    float magentaValue = lightSensor.read();
+    
+    updateQueue(greenDetection, greenSum, greenValue / magentaValue);
+    bool greenDetected = getValue(greenDetection, greenSum) < 10;
   
-    if (colorValue > 2880 && colorValue < 2890) {
-      if (colorDetected >= detectionThreshold) {
-        Serial3.println(colorDetected);
-        Serial3.println(colorValue);
-      }
-      else {
-        colorDetected++;
-      }
-    }
-    else {
-      colorDetected = 0;
+    if (yellowDetected || redDetected || greenDetected) {
+      autoPilotStop();
     }
   }
 }
