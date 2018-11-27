@@ -52,10 +52,19 @@ void sendMessageToRobot(string message){
 
 void listenToBluetooth(){
   string data;
-  ifstream bluetoothReciever ("/dev/pts/4", ifstream::binary);
+  ifstream bluetoothReciever ("/dev/pts/3", ifstream::binary); // changer pour /dev/rfcomm0 pour écouter le vrai bluetooth
   while(1){
     getline(bluetoothReciever, data);
-    sendMessageToIHM("robot", data);
+    if (data[0] == 'S'){
+      sendMessageToIHM("robot", "SPEED:" + to_string(data[1]));
+    } else if (data[0] == 'L'){
+      bool right = (data[1] & 1) > 0;
+      bool left = (data[1] & 2) > 0;
+      sendMessageToIHM("robot", "LINE:" + to_string(left) + ":" + to_string(right));
+    } else if (data[0] == 'C'){
+      sendMessageToIHM("robot", "COLOR:GREEN"); // TODO : Se mettre d'accord sur l'envoi des couleurs par lrobot 
+    }
+    
   }
 }
 
@@ -91,7 +100,7 @@ int main(int argc, char* argv[]) {
   struct input_event ev;
 
   bluetooth.open("/dev/rfcomm0");
-  
+
   WsServer server;
   server.config.port = 8080;
   auto &echo = server.endpoint["^/?$"];
