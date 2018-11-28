@@ -50,7 +50,7 @@ uint8_t motorValue(float speed) {
 //////////// Robot control functions ///////////////////////
 
 void autoPilotStop() {
-  bluetooth.sendData("Disable autopilot");
+  bluetooth.sendData("-LOG Disable autopilot");
   autoPilot = false;
   motor1Target = 0;
   motor2Target = 0;
@@ -78,18 +78,22 @@ void manageAutopilot(){
     if (sensorState != previousSensorState) {
       switch(sensorState) {
         case S1_IN_S2_IN:
+          sendLine(true, true);
           motor1Target = maxMotorValue;
           motor2Target = -maxMotorValue;
           break;
         case S1_IN_S2_OUT:
+          sendLine(false, true);
           motor1Target = maxMotorValue;
           motor2Target = maxMotorValue;
           break;
         case S1_OUT_S2_IN:
+          sendLine(true, false);
           motor1Target = -maxMotorValue;
           motor2Target = -maxMotorValue;
           break;
         case S1_OUT_S2_OUT:
+          sendLine(false, false);
           motor1Target = -maxMotorValue/3;
           motor2Target = +maxMotorValue/3;
           break;
@@ -150,9 +154,9 @@ void manageCommands(){
 }
 
 void proceedCommand(String command){
-  bluetooth.sendData("Proceeding command... (" + command +")");
+  bluetooth.sendData("-LOG Proceeding command... (" + command +")");
   if (command.substring(0,2) == String("A")){
-    bluetooth.sendData("SWITCH !");
+    bluetooth.sendData("-LOG SWITCH !");
     if (autoPilot){
       autoPilotStop();
     } else {
@@ -163,32 +167,26 @@ void proceedCommand(String command){
     return;
   }
   if (command.substring(0,1) == String("M")){
-    bluetooth.sendData("MOVING");
+    bluetooth.sendData("-LOG MOVING");
     int power = - (int) command[1];
     int turn = (int) command[2];
     
     motor1Target = -power - turn;
     motor2Target = power - turn;
-
-    bluetooth.sendData("Y : " + String(power));
-    bluetooth.sendData("X : " + String(turn));
-
-    bluetooth.sendData(String(motor1Target));
-    bluetooth.sendData(String(motor2Target));
   }
   if (command.substring(0,1) == String("C")){
     switch (command[1]) {
       case 'S':
         motor3Target = 0;
-        bluetooth.sendData("CRANE STOP");
+        bluetooth.sendData("-LOG CRANE STOP");
         break;
       case 'L':
         motor3Target = 50;
-        bluetooth.sendData("CRANE LOWER");
+        bluetooth.sendData("-LOG CRANE LOWER");
         break;
       case 'R':
         motor3Target = -50;
-        bluetooth.sendData("CRANE RAISE");
+        bluetooth.sendData("-LOG CRANE RAISE");
         break;
       default:
         break;
@@ -198,15 +196,15 @@ void proceedCommand(String command){
     switch (command[1]) {
       case 'S':
         motor4Target = 0;
-        bluetooth.sendData("PLIERS STOP");
+        bluetooth.sendData("-LOG PLIERS STOP");
         break;
       case 'O':
         motor4Target = 150;
-        bluetooth.sendData("PLIERS OPEN");
+        bluetooth.sendData("-LOG PLIERS OPEN");
         break;
       case 'C':
         motor4Target = -150;
-        bluetooth.sendData("PLIERS CLOSE");
+        bluetooth.sendData("-LOG PLIERS CLOSE");
         break;
       default:
         break;
@@ -238,16 +236,19 @@ void proceedCommand(String command){
 
 void updateMotors(){
   if(waitedTime < millis()){
+    bool speedChanged = false;
     if (motor1Target != motor1Actual){
+      speedChanged = true;
       if (motor1Target == 0){
         motor1.run(0);
       } else {
         motor1.run(motor1Target);
-        bluetooth.sendData("New motor speed : " + String(motor1Target));
+        bluetooth.sendData("-LOG New motor speed : " + String(motor1Target));
       } 
     }
   
     if (motor2Target != motor2Actual){
+      speedChanged = true;
       if (motor2Target == 0){
         motor2.run(0);
       } else {
@@ -273,7 +274,8 @@ void updateMotors(){
   
     // Si un moteur de chenille a changé de sens
     if ((motor1Target < 0 != motor1Actual < 0) || (motor2Target < 0 != motor2Actual < 0)){
-      bluetooth.sendData("Change de sens : " + String(motor1Target < 0 != motor1Actual < 0));
+      speedChanged = true;
+      // bluetooth.sendData("-LOG Change de sens : " + String(motor1Target < 0 != motor1Actual < 0));
       motor1.stop(); // On arrête les moteurs des chenilles
       motor2.stop();
       waitedTime = millis() + delayForMotorRestart;
@@ -284,7 +286,32 @@ void updateMotors(){
     motor2Actual = motor2Target;
     motor3Actual = motor3Target;
     motor4Actual = motor4Target;
+
+    if (speedChanged){
+      sendSpeed(motor1Target, -motor2Target);
+    }
   }
+}
+
+void sendSpeed(int motor1, int motor2){
+  int s = (((motor1 * 83) /255) + ((motor2 * 83) / 255))/2;
+  if(s < 0){
+    s = -s; 
+  }
+  Serial.println(String(motor1));
+  Serial.println(String(motor2));
+  Serial.println(String(s));
+  // bluetooth.sendData("-LOG: motor1 " + String(motor1));
+  // bluetooth.sendData("-LOG: motor2 " + String(motor2));
+  bluetooth.sendData("-LOG: speed " + String(s));
+  bluetooth.sendData("S" + String((char) (s + 1)));
+}
+
+void sendLine(bool left, bool right){
+  int line = 4;
+  line = left ? line +  2 : line;
+  line = right ? line +  1 : line;
+  bluetooth.sendData("L" + String((char) line));
 }
 
 void restartMotorsIfNeeded(){
@@ -293,7 +320,6 @@ void restartMotorsIfNeeded(){
       motor1.stop();
     } else {
       motor1.run(motor1Actual);
-      bluetooth.sendData(String(motor1Actual));
     }
     if (motor2Actual == 0){
       motor2.stop();
@@ -310,7 +336,7 @@ void restartMotorsIfNeeded(){
 void setup() {
   Serial.begin(9600);
   Serial3.begin(115200);
-  bluetooth.sendData("Booting");
+  bluetooth.sendData("-LOG Booting");
 }
 
 void loop() {

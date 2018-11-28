@@ -20,6 +20,8 @@ addWebsocketCallback(function(data){
     if(data.type == "controller") {
       var str     = data.message;
       var strCopy = str.split(':');
+      const arrowImg = $("#arrowImg");
+      arrowImg.css('display', 'block');
       if(strCopy[0] == "MOVE") {
         if (strCopy[2] < 50 && strCopy[2] > -50 && strCopy[1] < 100 && strCopy[1] > 0) {
           updateArrowImg(0); //flèche direction avant
@@ -29,6 +31,9 @@ addWebsocketCallback(function(data){
           updateArrowImg(2); //fleche avant gauche
         } else if(strCopy[1] < 50 && strCopy[1] > -50 && strCopy[2] > -100 && strCopy[2] < 0){
           updateArrowImg(3); //fleche avant droit
+        } else if(strCopy[1] == 0 && strCopy[2] == 0){
+          console.log("OK");
+          arrowImg.css('display', 'none');
         }
       }
     }

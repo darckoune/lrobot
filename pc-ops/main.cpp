@@ -52,11 +52,11 @@ void sendMessageToRobot(string message){
 
 void listenToBluetooth(){
   string data;
-  ifstream bluetoothReciever ("/dev/pts/3", ifstream::binary); // changer pour /dev/rfcomm0 pour écouter le vrai bluetooth
+  ifstream bluetoothReciever ("/dev/rfcomm0", ifstream::binary); // changer pour /dev/rfcomm0 pour écouter le vrai bluetooth
   while(1){
     getline(bluetoothReciever, data);
     if (data[0] == 'S'){
-      sendMessageToIHM("robot", "SPEED:" + to_string(data[1]));
+      sendMessageToIHM("robot", "SPEED:" + to_string(data[1] - 1));
     } else if (data[0] == 'L'){
       bool right = (data[1] & 1) > 0;
       bool left = (data[1] & 2) > 0;
