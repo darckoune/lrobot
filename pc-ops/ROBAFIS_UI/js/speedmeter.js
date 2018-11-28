@@ -1,7 +1,18 @@
 //https://github.com/kottenator/jquery-circle-progress
 const circleMax = 0.75;
-const maxSpeed = 90;
-let actualSpeed = 10;
+const maxSpeed = 80;
+let actualSpeed = 0;
+
+addWebsocketCallback(function(data){
+  if(data.type == "robot") {
+    var str     = data.message;
+    var strCopy = str.split(':');
+    if(strCopy[0] == "SPEED") {
+      actualSpeed = strCopy[1];
+      circle.circleProgress('value', (actualSpeed / maxSpeed) * circleMax);
+    }
+  }
+});
 
 var circle = $('#circle').circleProgress({
   startAngle: Math.PI,
@@ -38,9 +49,28 @@ circle.on('circle-animation-progress', function(e, v) {
   ctx.textBaseline = 'middle';
 
   //Vitesse
-  ctx.font = "normal " + s / 2.5 + "px sans-serif";
-  ctx.fillStyle = "#ffffff";
-  ctx.fillText(getActualSpeed(), s / 2, s / 2);
+  if(phase == 4 || phase == 5 ) {
+    if(actualSpeed <= 15 ){
+      ctx.font = "normal " + s / 2.5 + "px sans-serif";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(getActualSpeed(), s / 2, s / 2);
+    } else {
+      ctx.font = "normal " + s / 2.5 + "px sans-serif";
+      ctx.fillStyle = "red";
+      ctx.fillText(getActualSpeed(), s / 2, s / 2);
+    }
+  } else {
+    if(actualSpeed <= 80 ){
+      ctx.font = "normal " + s / 2.5 + "px sans-serif";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(getActualSpeed(), s / 2, s / 2);
+    } else {
+      ctx.font = "normal " + s / 2.5 + "px sans-serif";
+      ctx.fillStyle = "red";
+      ctx.fillText(getActualSpeed(), s / 2, s / 2);
+    }
+  }
+
 
   //Unité de la vitesse
   ctx.fillStyle = "#ffffff";
@@ -65,19 +95,19 @@ circle.on('circle-animation-progress', function(e, v) {
 
 //pour modifier dynamiquement la position du cercle
 //setTimeout(function() { circle.circleProgress('value', 0.5); }, 3000);
-(function test() {
-
-  setTimeout(function() {
-    circle.circleProgress('value', (actualSpeed / maxSpeed) * circleMax);
-  }, 1000);
-
-  setTimeout(function() {
-    actualSpeed = 90;
-    circle.circleProgress('value', (actualSpeed / maxSpeed) * circleMax);
-  }, 2000);
-
-  setTimeout(function() {
-    actualSpeed = 80;
-    circle.circleProgress('value', (actualSpeed / maxSpeed) * circleMax);
-  }, 3000);
-})();
+// (function test() {
+//
+//   setTimeout(function() {
+//     circle.circleProgress('value', (actualSpeed / maxSpeed) * circleMax);
+//   }, 1000);
+//
+//   setTimeout(function() {
+//     actualSpeed = 90;
+//     circle.circleProgress('value', (actualSpeed / maxSpeed) * circleMax);
+//   }, 2000);
+//
+//   setTimeout(function() {
+//     actualSpeed = 20;
+//     circle.circleProgress('value', (actualSpeed / maxSpeed) * circleMax);
+//   }, 3000);
+// })();

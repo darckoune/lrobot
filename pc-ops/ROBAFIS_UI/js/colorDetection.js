@@ -1,26 +1,5 @@
-function test (colorContext) {
-    setTimeout(function() {
-       greenDetected(colorContext);
-    }, 1000);
-    
-    setTimeout(function() {
-       noColorDetected(colorContext);
-    }, 3000);
-    
-    setTimeout(function() {
-       yellowDetected(colorContext);
-    }, 4000);
-    
-    setTimeout(function() {
-       noColorDetected(colorContext);
-    }, 5000);
-    
-    setTimeout(function() {
-       redDetected(colorContext);
-    }, 6000);
-  }
-  
-  
+var colorContext = undefined;
+
   function createColorCanvas () {
     var colorContainer = document.getElementById('colorDetection');
     var colorCanvas = document.createElement('canvas');
@@ -28,15 +7,12 @@ function test (colorContext) {
     colorCanvas.width = 400;
     colorCanvas.height = 300;
     colorContainer.appendChild(colorCanvas);
-  
-    var colorContext=colorCanvas.getContext('2d');
-  
+
+    colorContext=colorCanvas.getContext('2d');
+
     noColorDetected(colorContext);
-    
-    //to remove
-    test(colorContext);
   }
-  
+
   function noColorDetected(colorContext) {
     //green
     colorContext.beginPath();
@@ -46,7 +22,7 @@ function test (colorContext) {
     /*colorContext.lineWidth = 5;
     colorContext.strokeStyle = '#dbdbdb';*/
     colorContext.stroke();
-  
+
     //red
     colorContext.beginPath();
     colorContext.arc(280, 75, 50, 0, 2 * Math.PI);
@@ -55,7 +31,7 @@ function test (colorContext) {
     /*colorContext.lineWidth = 5;
     colorContext.strokeStyle = '#dbdbdb';*/
     colorContext.stroke();
-  
+
     //yellow
     colorContext.beginPath();
     colorContext.arc(200, 200, 50, 0, 2 * Math.PI);
@@ -65,7 +41,7 @@ function test (colorContext) {
     colorContext.strokeStyle = '#dbdbdb';*/
     colorContext.stroke();
   }
-  
+
   function greenDetected (colorContext) {
     colorContext.beginPath();
     colorContext.arc(120, 75, 50, 0, 2 * Math.PI);
@@ -75,7 +51,7 @@ function test (colorContext) {
     colorContext.strokeStyle = '#ffffff';*/
     colorContext.stroke();
   }
-  
+
   function redDetected (colorContext) {
     colorContext.beginPath();
     colorContext.arc(280, 75, 50, 0, 2 * Math.PI);
@@ -85,7 +61,7 @@ function test (colorContext) {
     colorContext.strokeStyle = '#ffffff';*/
     colorContext.stroke();
   }
-  
+
   function yellowDetected (colorContext) {
     colorContext.beginPath();
     colorContext.arc(200, 200, 50, 0, 2 * Math.PI);
@@ -98,4 +74,29 @@ function test (colorContext) {
 
 $(document).ready(function(){
     createColorCanvas();
+});
+
+addWebsocketCallback(function(data){
+  if(data.type == "robot") {
+    var str     = data.message;
+    var strCopy = str.split(':');
+    if(strCopy[0] == "COLOR") {
+      switch (strCopy[1]) {
+        case "GREEN":
+          noColorDetected(colorContext)
+          greenDetected(colorContext);
+          break;
+        case "RED":
+          noColorDetected(colorContext)
+          redDetected(colorContext);
+          break;
+        case "YELLOW":
+          noColorDetected(colorContext)
+          yellowDetected(colorContext);
+          break;
+        default:
+          noColorDetected(colorContext);
+      }
+    }
+  }
 });

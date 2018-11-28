@@ -1,21 +1,27 @@
 var Ihm = "PILOT";
-
+var phase = 2;
 addWebsocketCallback(function(data){
   if(data.type == "robot") {
     var str = data.message;
     var strCopy = str.split(':');
     if(strCopy[0] == 'STEP') {
       valideEtat(strCopy[1]);
+      phase = strCopy[1];
     }
   }
 
   if(data.type == "controller") {
     var str = data.message;
-    if(str == "AUTOPILOT") {
+    var strCopy = str.split(':');
+    if(strCopy[1] == "MANU") {
+      var Ihm = "MANU";
+      changeIHM();
+    }
+    if(strCopy[1] == "PILOT") {
+      var Ihm = "PILOT";
       changeIHM();
     }
   }
-
 });
 
 // Fonction pour passer de IHM manu à pilot
@@ -48,5 +54,3 @@ function changeIHM() {
       $('#circle'+i).css('background-color', '#075C93');
     }
   }
-  valideEtat(3);
-console.log("bidule");

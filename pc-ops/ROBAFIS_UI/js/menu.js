@@ -1,20 +1,15 @@
 addWebsocketCallback(function(data){
   if(data.type == "controller") {
-    var str = data.message;
-    if(str == "AUTOPILOT") {
-
-      console.log(Ihm);
-      var links = document.querySelectorAll(".mynav a");
-      if(Ihm == "PILOT") {
-        links[0].click();
-        Ihm = "MANU";
-      } else {
-        links[1].click();
-        Ihm = "PILOT";
-      }
+    var str     = data.message;
+    var strCopy = str.split(':');
+    var links   = document.querySelectorAll(".mynav a");
+    if(strCopy[1] == "PILOT") {
+      links[0].click();
+    }
+    if(strCopy[1] == "MANU") {
+      links[1].click();
     }
   }
-
 });
 
 $(document).ready(function(){

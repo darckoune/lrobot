@@ -1,3 +1,33 @@
+var state = 0;
+var status = undefined;
+addWebsocketCallback(function(data){
+  if(data.type == "controller") {
+    var str = data.message;
+    var strCopy = str.split(':');
+    if(strCopy[0] == "PLIERS") {
+      if(strCopy[1] == "OPEN") {
+        status ="OPEN";
+      }
+      if(strCopy[1] == "CLOSE"){
+        status ="CLOSE";
+      }
+      if(strCopy[1] == "STOP"){
+        status ="STOP";
+      }
+      openGripper(status);
+    }
+  }
+});
+function openGripper(status) {
+  if(status == "OPEN") {
+    state = state -1;
+    updateGripperImg(state);
+  } else if(status  == "CLOSE"){
+    state = state +1;
+    updateGripperImg(state);
+  }
+}
+
 const initGripperImg = () => {
     var gripperImg = document.createElement('img');
     gripperImg.setAttribute('id', 'gripperImg');
@@ -56,11 +86,11 @@ const updateGripperImg = (state) => {
 $(document).ready(function(){
     (function test () {
         initGripperImg();
-        for (let i = 0; i < 8; i++) {
-            setTimeout(function() {
-                let state = i;
-                updateGripperImg(state);
-            }, i*500);
-        }
+        // for (let i = 0; i < 8; i++) {
+        //     setTimeout(function() {
+        //         let state = i;
+        //         updateGripperImg(state);
+        //     }, i*500);
+        // }
     })();
 });
