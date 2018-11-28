@@ -24,6 +24,8 @@ vector<shared_ptr<WsServer::Connection>> connections;
 
 ofstream bluetooth;
 
+int phase = 0;
+
 void sendMessageToIHM(string type, string message){
   string jsonMessage = "{\"type\":\"" + type + "\",\"message\":\"" + message + "\"}";
   cout << "Sending to " << connections.size() << " websocket(s) : " << jsonMessage << endl;
@@ -62,7 +64,24 @@ void listenToBluetooth(){
       bool left = (data[1] & 2) > 0;
       sendMessageToIHM("robot", "LINE:" + to_string(left) + ":" + to_string(right));
     } else if (data[0] == 'C'){
-      sendMessageToIHM("robot", "COLOR:GREEN"); // TODO : Se mettre d'accord sur l'envoi des couleurs par lrobot 
+      if (data[1] < 32){
+        string colorCommand = "COLOR:";
+        if((data[1] & 1) > 0){
+          sendMessageToIHM("robot", colorCommand + "YELLOW");
+        } else if((data[1] & 2) > 0){
+          sendMessageToIHM("robot", colorCommand + "RED");
+        } else if((data[1] & 4) > 0){
+          sendMessageToIHM("robot", colorCommand + "GREEN");
+        }
+      }
+    } else if (data[0] == 'A'){
+      if (data[1] != 13){
+        bool autopilot = (data[1] & 1) > 0;
+        sendMessageToIHM("robot", "AUTOPILOT:" + to_string(autopilot));
+      }
+    } else if (data[0] == 'N'){
+      phase++;
+      sendMessageToIHM("robot", "STEP:" + to_string(phase));
     }
     
   }
@@ -96,6 +115,7 @@ int main(int argc, char* argv[]) {
   Controller c1;
 
   int fd;
+
   fd = open("/dev/input/by-id/usb-Microsoft_Controller_7EED87356C04-event-joystick", O_RDONLY);
   struct input_event ev;
 
@@ -125,6 +145,10 @@ int main(int argc, char* argv[]) {
     auto message_str = message->string();
 
     cout << "Server: Message received: \"" << message_str << "\" from " << connection.get() << endl;
+
+    if (message_str == "STEP"){
+      sendMessageToIHM("robot","STEP:" + to_string(phase));
+    }
 
   };
 

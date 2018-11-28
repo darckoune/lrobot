@@ -17,7 +17,7 @@ MeLineFollower lineFinder(PORT_5);
 MeLightSensor lightSensor(PORT_6);
 MeRGBLed led(PORT_7);
 
-bool autoPilot = true;
+bool autoPilot = false;
 uint8_t maxMotorValue = 255;
 int previousSensorState = -1;
 queue<float> yellowDetection;
@@ -50,7 +50,7 @@ uint8_t motorValue(float speed) {
 //////////// Robot control functions ///////////////////////
 
 void autoPilotStop() {
-  bluetooth.sendData("-LOG Disable autopilot");
+  sendAutopilot(false);
   autoPilot = false;
   motor1Target = 0;
   motor2Target = 0;
@@ -61,7 +61,6 @@ void autoPilotStop() {
 void updateQueue(queue<float>& queue, float& sum, float value) {
   sum += value;
   queue.push(value);
-
   if (queue.size() > 100) {
     sum -= queue.front();
     queue.pop();
@@ -139,6 +138,8 @@ void manageAutopilot(){
   
     if (yellowDetected || redDetected || greenDetected) {
       autoPilotStop();
+      sendColor(yellowDetected, redDetected, greenDetected);
+      sendNextPhase();
     }
   }
 }
@@ -160,7 +161,10 @@ void proceedCommand(String command){
     if (autoPilot){
       autoPilotStop();
     } else {
+      // Implémenter une véfification de la présence de la ligne
       autoPilot = true;
+      sendAutopilot(true);
+      sendNextPhase();
     }
   }
   if(autoPilot){
@@ -291,27 +295,6 @@ void updateMotors(){
       sendSpeed(motor1Target, -motor2Target);
     }
   }
-}
-
-void sendSpeed(int motor1, int motor2){
-  int s = (((motor1 * 83) /255) + ((motor2 * 83) / 255))/2;
-  if(s < 0){
-    s = -s; 
-  }
-  Serial.println(String(motor1));
-  Serial.println(String(motor2));
-  Serial.println(String(s));
-  // bluetooth.sendData("-LOG: motor1 " + String(motor1));
-  // bluetooth.sendData("-LOG: motor2 " + String(motor2));
-  bluetooth.sendData("-LOG: speed " + String(s));
-  bluetooth.sendData("S" + String((char) (s + 1)));
-}
-
-void sendLine(bool left, bool right){
-  int line = 4;
-  line = left ? line +  2 : line;
-  line = right ? line +  1 : line;
-  bluetooth.sendData("L" + String((char) line));
 }
 
 void restartMotorsIfNeeded(){

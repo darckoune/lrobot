@@ -7,6 +7,11 @@ addWebsocketCallback(function(data){
     if(strCopy[0] == 'STEP') {
       valideEtat(strCopy[1]);
       phase = strCopy[1];
+      if (phase == 0 || phase == 1 || phase == 3 || phase == 5 || phase == 6){
+        choseIHM("PILOT");
+      } else {
+        choseIHM("MANU");
+      }
     }
   }
 
@@ -38,6 +43,20 @@ function changeIHM() {
     $('#lineFollower').css('display', 'block');
   }
 }
+// Fonction pour changer manuellement d'IHM
+function choseIHM(type) {
+  if (type == "MANU") {
+    $("#bras").css('display', 'block');
+    $("#pince").css('display', 'block');
+    $('#colorDetection').css('display', 'none');
+    $('#lineFollower').css('display', 'none');
+  } else if (type == "PILOT") {
+    $("#bras").css('display', 'none');
+    $("#pince").css('display', 'none');
+    $('#colorDetection').css('display', 'block');
+    $('#lineFollower').css('display', 'block');
+  }
+}
 // fonction de changement etat (étape du parcours)
   function valideEtat(etat) {
     for(i = etat ; i >= 0 ; i--) {
@@ -54,3 +73,4 @@ function changeIHM() {
       $('#circle'+i).css('background-color', '#075C93');
     }
   }
+  

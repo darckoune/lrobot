@@ -24,6 +24,7 @@ function setupSocket(){
         if(onWebsocket){
             onWebsocket({type:"socket", "message":"CONNECTED"});
         }
+        websocket.send("STEP");
     };
     websocket.onclose=function(evt){
         if(onWebsocket){
