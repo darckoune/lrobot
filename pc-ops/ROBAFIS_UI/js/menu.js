@@ -33,10 +33,10 @@ $(document).ready(function(){
         var left = links[i].getBoundingClientRect().left + window.pageXOffset - margin;
         var top = links[i].getBoundingClientRect().top + window.pageYOffset;
 
-        span.style.width = width + "px";
-        span.style.height = height + "px";
-        span.style.left = left + "px";
-        span.style.top = top + 1 + "px";
+        span.style.width = 410 + "px";
+        span.style.height = 44 + "px";
+        span.style.left = 245 + "px";
+        span.style.top = 0  + "px";
         span.style.transform = "none";
 
         li[i].appendChild(span);
@@ -63,8 +63,8 @@ $(document).ready(function(){
 
         target.style.width = width + "px";
         target.style.height = height + "px";
-        target.style.left = left + "px";
-        target.style.top = top + "px";
+        target.style.left = left - 625 + "px";
+        target.style.top = 0 + "px";
         target.style.transform = "none";
       }
     }
@@ -95,4 +95,5 @@ $(document).ready(function(){
     }
 
     window.addEventListener("resize", resizeFunc);
+    links[0].click();
 });

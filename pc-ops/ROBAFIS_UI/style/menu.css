@@ -20,7 +20,7 @@
   }
 
   .target {
-    position: fixed;
+    position: absolute;
     border-bottom: 4px solid transparent;
     z-index: -1;
     border-color: #ffffff;
@@ -34,7 +34,7 @@
   }
 
   .mynav span {
-    position: fixed;
+    position: absolute;
     border-bottom: 2px solid transparent;
     border-color: #5f6c77;
     z-index: -1;
