@@ -6,27 +6,17 @@ addWebsocketCallback(function(data){
     var strCopy = str.split(':');
     if(strCopy[0] == "PLIERS") {
       if(strCopy[1] == "OPEN") {
-        status ="OPEN";
+        updateGripperImg(0);
       }
       if(strCopy[1] == "CLOSE"){
-        status ="CLOSE";
+        updateGripperImg(1);
       }
       if(strCopy[1] == "STOP"){
-        status ="STOP";
+        updateGripperImg(2);
       }
-      openGripper(status);
     }
   }
 });
-function openGripper(status) {
-  if(status == "OPEN") {
-    state = state -1;
-    updateGripperImg(state);
-  } else if(status  == "CLOSE"){
-    state = state +1;
-    updateGripperImg(state);
-  }
-}
 
 const initGripperImg = () => {
     var gripperImg = document.createElement('img');
@@ -46,37 +36,16 @@ const updateGripperImg = (state) => {
     if (gripperImg) {
         switch (state) {
             case 0:
-                gripperImg.setAttribute('src', 'img/gripper1.png');
+                gripperImg.setAttribute('src', 'img/gripper_opening.gif');
                 break;
 
             case 1:
-                gripperImg.setAttribute('src', 'img/gripper2.png');
+                gripperImg.setAttribute('src', 'img/gripper_closing.gif');
                 break;
 
             case 2:
-                gripperImg.setAttribute('src', 'img/gripper3.png');
+                gripperImg.setAttribute('src', 'img/gripper1.png');
                 break;
-
-            case 3:
-                gripperImg.setAttribute('src', 'img/gripper4.png');
-                break;
-
-            case 4:
-                gripperImg.setAttribute('src', 'img/gripper5.png');
-                break;
-
-            case 5:
-                gripperImg.setAttribute('src', 'img/gripper6.png');
-                break;
-
-            case 6:
-                gripperImg.setAttribute('src', 'img/gripper7.png');
-                break;
-
-            case 7:
-                gripperImg.setAttribute('src', 'img/gripper8.png');
-                break;
-
             default:
                 break;
         }

@@ -2,12 +2,12 @@ addWebsocketCallback(function(data){
   if(data.type == "controller") {
     var str     = data.message;
     var strCopy = str.split(':');
-    if(strCopy[0] == "PLIERS") {
-      if(strCopy[1] == "OPEN") {
+    if(strCopy[0] == "CRANE") {
+      if(strCopy[1] == "RAISE") {
         console.log("ici");
         updateBras(0);
       }
-      if(strCopy[1] == "CLOSE") {
+      if(strCopy[1] == "LOWER") {
         updateBras(1);
       }
       if(strCopy[1] == "STOP") {
