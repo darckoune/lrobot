@@ -29,19 +29,21 @@ body {
 }
 
 #lineFollowerImg {
-  width: 50%;
-  height: 20%;
+  width: 270px;
+  display: block;
+  margin: 0 auto;
 }
 
 /* colorDetection */
 #colorDetection {
-  height: 80%;
-  margin-left: 15%;
-  margin-top: 15%;
+  
 }
 
 #colorCanvas {
-  height: 75%;
+  height: 250px;
+  display: block;
+  margin: 0 auto;
+  margin-top: 50px;
 }
 
 /* image blutooth*/
@@ -75,7 +77,6 @@ body {
 /* Progress bar */
 /* Form Progress */
 .vprogress {
-  width: 1000px;
   margin: 20px auto;
   text-align: center;
 }

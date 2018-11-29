@@ -52,8 +52,7 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-lg-3"></div>
-      <div class="col-lg-1"></div>
+      <div class="col-lg-4"></div>
       <div class="col-lg-8">
         <div>
             <img id="imageRobot" src="img/robot-icon.png"></img>
@@ -63,6 +62,7 @@
     </div>
     <div class="row">
       <div class="col-lg-3">
+        <div class="row" style="height: 60px;"></div>
         <div id="circle"></div>
         <div id="arrow"></div>
       </div>
@@ -117,18 +117,22 @@
               Y :<input id="Y" type="text" /> -->
               <img id="gamepadImg" src="img/xbox-controller.png" alt="gamepad">
           </div>
-          <div class="col-lg-6">
+          <div class="col-lg-1"></div>
+          <div class="col-lg-4">
             <div id="pince" style="display:none;">
               <div class="name">Bras mécanique</div></br>
               <div class="name">Pince</div>
               <img id="gripper"></img>
             </div>
-            <div id="colorDetection" ></div>
+            <div id="colorDetection" >
+                <div class="name">Détection de couleur</div>
+            </div>
           </div>
+          <div class="col-lg-2"></div>
         </div>
         <div class="row">
           <div class="col-lg-1"></div>
-          <div class="col-lg-5">
+          <div class="col-lg-4">
             <div class="name">Mode</div>
             <div class="can-toggle demo-rebrand-2">
               <input id="e" type="checkbox">
@@ -140,13 +144,17 @@
               </div>
             </div>
           </div>
-          <div class="col-lg-6">
+          <div class="col-lg-1"></div>
+          <div class="col-lg-4">
             <div id="bras" style="display:none;">
               <div id ="nomSpeed" class="name">Bras</div>
               <img id="brasAnimation"></img>
             </div>
-            <div id="lineFollower"></div>
+            <div id="lineFollower">
+                <div class="name">Line Follower</div>
+            </div>
           </div>
+          <div class="col-lg-2"></div>
         </div>
       </div>
   <script src="lib/circle-progress.js"></script>
