@@ -52,9 +52,9 @@ body {
 }
 /* image robot  */
 #imageRobot {
+  display: block;
+  margin: 0 auto;
   width: 60px;
-  margin-left: 56%;
-  margin-top: -20px;
 }
 /* barre de séparation entre l'image et le nom des IHM */
 #barreHorizontal {
@@ -66,12 +66,11 @@ body {
     display: block;
     margin-top: 0.5em;
     margin-bottom: 0.5em;
-    margin-left: 46%;
     margin-right: auto;
     border-style: inset;
     border-width: 1px;
     color: white;
-    width: 21%;
+    width: 413px;
 }
 /* Progress bar */
 /* Form Progress */
