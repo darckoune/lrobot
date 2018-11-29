@@ -2,7 +2,6 @@ var websocket;
 var onWebsocket;
 var onWebsocketCallbacks = [];
 
-
 function setupSocket(){
     if(onWebsocket){
         onWebsocket({type:"socket", "message":"CONNECTING"});

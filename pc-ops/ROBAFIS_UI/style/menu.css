@@ -83,7 +83,6 @@
 }
 
 .mynav span {
-  position: absolute;
   border-bottom: 2px solid transparent;
   border-color: #5f6c77;
   z-index: -1;
