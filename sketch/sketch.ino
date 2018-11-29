@@ -23,9 +23,13 @@ int previousSensorState = -1;
 queue<float> yellowDetection;
 queue<float> redDetection;
 queue<float> greenDetection;
+int bufferSize = 15;
 float yellowSum = 0;
 float redSum = 0;
 float greenSum = 0;
+float yellowThreshold = -80.0;
+float redThreshold = -25.0;
+float greenThreshold = 10.0;
 
 int motor1Target = 0;
 int motor1Actual = 0;
@@ -51,19 +55,29 @@ uint8_t motorValue(float speed) {
 
 //////////// Robot control functions ///////////////////////
 
+void emptyQueue(queue<float>& queue) {
+  while (!queue.empty()) {
+    queue.pop();
+  }
+}
+
 void autoPilotStop() {
   sendAutopilot(false);
   autoPilot = false;
+  previousSensorState = -1;
   motor1Target = 0;
   motor2Target = 0;
   led.setColor(0, 0, 0);
   led.show();
+  emptyQueue(yellowDetection);
+  emptyQueue(redDetection);
+  emptyQueue(greenDetection);
 }
 
 void updateQueue(queue<float>& queue, float& sum, float value) {
   sum += value;
   queue.push(value);
-  if (queue.size() > 100) {
+  if (queue.size() > bufferSize) {
     sum -= queue.front();
     queue.pop();
   }
@@ -86,11 +100,11 @@ void manageAutopilot(){
         case S1_IN_S2_OUT:
           sendLine(false, true);
           motor1Target = maxMotorValue;
-          motor2Target = maxMotorValue;
+          motor2Target = 0;
           break;
         case S1_OUT_S2_IN:
           sendLine(true, false);
-          motor1Target = -maxMotorValue;
+          motor1Target = 0;
           motor2Target = -maxMotorValue;
           break;
         case S1_OUT_S2_OUT:
@@ -114,7 +128,7 @@ void manageAutopilot(){
     float blueValue = lightSensor.read();
 
     updateQueue(yellowDetection, yellowSum, yellowValue / blueValue);
-    bool yellowDetected = getValue(yellowDetection, yellowSum) < -80;
+    bool yellowDetected = yellowDetection.size() == bufferSize && getValue(yellowDetection, yellowSum) < yellowThreshold;
 
     led.setColor(255, 0, 0);
     led.show();
@@ -125,7 +139,7 @@ void manageAutopilot(){
     float cyanValue = lightSensor.read();
 
     updateQueue(redDetection, redSum, redValue / cyanValue);
-    bool redDetected = getValue(redDetection, redSum) < -25;
+    bool redDetected = redDetection.size() == bufferSize && getValue(redDetection, redSum) < redThreshold;
 
     led.setColor(0, 255, 0);
     led.show();
@@ -136,7 +150,7 @@ void manageAutopilot(){
     float magentaValue = lightSensor.read();
     
     updateQueue(greenDetection, greenSum, greenValue / magentaValue);
-    bool greenDetected = getValue(greenDetection, greenSum) < 10;
+    bool greenDetected = greenDetection.size() == bufferSize && getValue(greenDetection, greenSum) < greenThreshold;
   
     if (yellowDetected || redDetected || greenDetected) {
       autoPilotStop();
