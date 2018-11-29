@@ -57,6 +57,9 @@ void listenToBluetooth(){
   ifstream bluetoothReciever ("/dev/rfcomm0", ifstream::binary); // changer pour /dev/rfcomm0 pour écouter le vrai bluetooth
   while(1){
     getline(bluetoothReciever, data);
+    if (data.size()){
+      sendMessageToIHM("LOG", data);
+    }
     if (data[0] == 'S'){
       sendMessageToIHM("robot", "SPEED:" + to_string(data[1] - 1));
     } else if (data[0] == 'L'){

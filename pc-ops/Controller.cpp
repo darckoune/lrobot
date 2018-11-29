@@ -78,7 +78,7 @@ controllerEvent Controller::getLastEvent() {
     JSL_V.changed = false;
     int v = (-1 * JSL_V.value)/327;
     int h = (JSL_H.value)/327;
-    event.robotMessage = string("M") + string(1, v) + string(1, h);
+    event.robotMessage = string("M") + string(1, v + 1) + string(1, h + 1);
     event.ihmMessage = string("MOVE:") + to_string(v) + ":" + to_string(h);
   }
   if (DPAD_V.changed){
@@ -113,6 +113,13 @@ controllerEvent Controller::getLastEvent() {
         event.robotMessage += "RL";
         event.ihmMessage += "REVERSE:LEFT";
         break;
+    }
+  }
+  if(R1.changed){
+    R1.changed = false;
+    if(R1.value){
+      event.robotMessage = string("S");
+      event.ihmMessage = string("SWAP");
     }
   }
   return event;
@@ -157,10 +164,10 @@ void Controller::setBooleanInputValue(booleanInput* input, bool value){
 }
 
 void Controller::setIntInputValue(intInput* input, int value){
-  if (abs(value) < 5000){
+  if (abs(value) < 6000){
     value = 0;
   }
-  if (abs(input->value - value) > 1500){
+  if (abs(input->value - value) > 3000){
     input->value = value;
     input->changed = true;
   }
