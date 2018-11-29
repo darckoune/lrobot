@@ -28,8 +28,12 @@
   <script src="js/chronometer.js"></script>
   <script src="js/clock.js"></script>
   <script src="js/menu.js"></script>
-  <script src="js/joy.js"></script>
-  <script src="js/gamepad.js"></script>
+  <script src="js/Joystick.js"></script>
+  <script src="js/RoundButton.js"></script>
+  <script src="js/SquareButton.js"></script>
+  <script src="js/XboxButton.js"></script>
+  <script src="js/CustomButton.js"></script>
+  <script src="js/Gamepad.js"></script>
   <script src="js/gripper.js"></script>
   <script src="js/speedLimit.js"></script>
   <script src="js/toggleButton.js"></script>
@@ -109,13 +113,10 @@
           <div class="col-lg-1"></div>
           <div class="col-lg-4">
             <div class="name">Manette</div>
-              <div id="joyDiv"></div>
-              <!-- Posizione X:<input id="posizioneX" type="text" /></br>
-              Posizione Y:<input id="posizioneY" type="text" /></br>
-              Direzione:<input id="direzione" type="text" /></br>
-              X :<input id="X" type="text" /></br>
-              Y :<input id="Y" type="text" /> -->
-              <img id="gamepadImg" src="img/xbox-controller.png" alt="gamepad">
+            <div style="display:none;">
+                <img id="gamepadImg" src="img/xbox-controller.png" alt="gamepadImg">
+              </div>
+              <canvas id="gamepad"></canvas>
           </div>
           <div class="col-lg-1"></div>
           <div class="col-lg-4">
