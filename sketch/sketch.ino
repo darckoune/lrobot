@@ -39,6 +39,8 @@ long waitedTime = 0;
 bool restartMotorsAfterDelay = false;
 int delayForMotorRestart = 100;
 
+int swapMotor = 1;
+
 uint8_t motorValue(float speed) {
   float secondsPerMinute = 60;
   float wheelDiameter = 60;
@@ -172,11 +174,7 @@ void proceedCommand(String command){
   }
   if (command.substring(0,1) == String("M")){
     bluetooth.sendData("-LOG MOVING");
-    int power = - (int) command[1];
-    int turn = (int) command[2];
-    
-    motor1Target = -power - turn;
-    motor2Target = power - turn;
+    controlMove((int) command[1],(int) command[2]);
   }
   if (command.substring(0,1) == String("C")){
     switch (command[1]) {
@@ -203,11 +201,11 @@ void proceedCommand(String command){
         bluetooth.sendData("-LOG PLIERS STOP");
         break;
       case 'O':
-        motor4Target = 150;
+        motor4Target = -150;
         bluetooth.sendData("-LOG PLIERS OPEN");
         break;
       case 'C':
-        motor4Target = -150;
+        motor4Target = 150;
         bluetooth.sendData("-LOG PLIERS CLOSE");
         break;
       default:
@@ -227,14 +225,17 @@ void proceedCommand(String command){
         way = 0;
         break;
     }
-    motor1.run(way * maxMotorValue);
-    motor2.run(way * maxMotorValue);
+    motor1.run(swapMotor * way * maxMotorValue);
+    motor2.run(swapMotor * way * maxMotorValue);
     waitedTime = millis() + 4000;
     restartMotorsAfterDelay = true;
     motor1Target = 0;
     motor2Target = 0;
     motor1Actual = 0;
     motor2Actual = 0;
+  }
+  if (command.substring(0,1) == String("S")){
+    swapMotor = swapMotor * -1;
   }
 }
 
@@ -246,7 +247,7 @@ void updateMotors(){
       if (motor1Target == 0){
         motor1.run(0);
       } else {
-        motor1.run(motor1Target);
+        motor1.run(swapMotor * motor1Target);
         bluetooth.sendData("-LOG New motor speed : " + String(motor1Target));
       } 
     }
@@ -256,7 +257,7 @@ void updateMotors(){
       if (motor2Target == 0){
         motor2.run(0);
       } else {
-        motor2.run(motor2Target);
+        motor2.run(swapMotor * motor2Target);
       }
     }
   
@@ -302,12 +303,12 @@ void restartMotorsIfNeeded(){
     if (motor1Actual == 0){
       motor1.stop();
     } else {
-      motor1.run(motor1Actual);
+      motor1.run(motor1Actual * swapMotor);
     }
     if (motor2Actual == 0){
       motor2.stop();
     } else {
-      motor2.run(motor2Actual);
+      motor2.run(motor2Actual * swapMotor);
     }
     restartMotorsAfterDelay = false;
   }
