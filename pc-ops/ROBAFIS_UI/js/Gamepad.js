@@ -4,7 +4,7 @@ var ctx;
 var joy1;
 var joy2;
 
-window.onload = function() {
+$(document).ready(function(){
   img = document.getElementById("gamepadImg");
   canvas = document.getElementById("gamepad");
   canvas.width = img.width;
@@ -70,4 +70,4 @@ window.onload = function() {
 
   triggerR2 = new CustomButton(ctx, [226,37], [247,44], [250,55], [216,43], "#CCCCCC");
   triggerR2.draw();
-};
+});
