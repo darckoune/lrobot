@@ -35,12 +35,14 @@ function changeIHM() {
     $("#bras").css('display', 'block');
     $("#pince").css('display', 'block');
     $('#colorDetection').css('display', 'block');
-    $('#lineFollower').css('display', 'none');
+    $('#lineFollowerPILOT').css('display', 'none');
+    $('#lineFollowerMANU').css('display', 'block');
   } else {
     $("#bras").css('display', 'none');
     $("#pince").css('display', 'none');
     $('#colorDetection').css('display', 'none');
-    $('#lineFollower').css('display', 'block');
+    $('#lineFollowerPILOT').css('display', 'none');
+    $('#lineFollowerMANU').css('display', 'block');
   }
 }
 // Fonction pour changer manuellement d'IHM
@@ -49,12 +51,14 @@ function choseIHM(type) {
     $("#bras").css('display', 'block');
     $("#pince").css('display', 'block');
     $('#colorDetection').css('display', 'block');
-    $('#lineFollower').css('display', 'none');
+    $('#lineFollowerPILOT').css('display', 'none');
+    $('#lineFollowerMANU').css('display', 'block');
   } else if (type == "PILOT") {
     $("#bras").css('display', 'none');
     $("#pince").css('display', 'none');
     $('#colorDetection').css('display', 'none');
-    $('#lineFollower').css('display', 'block');
+    $('#lineFollowerPILOT').css('display', 'block');
+    $('#lineFollowerMANU').css('display', 'none');
   }
 }
 // fonction de changement etat (étape du parcours)

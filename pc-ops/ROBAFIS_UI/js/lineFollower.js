@@ -19,11 +19,11 @@ addWebsocketCallback(function(data){
     }
 });
 
-const initLineFollowerImg = () => {
+const initLineFollowerImg = (mode) => {
     var lineFollowerImg = document.createElement('img');
-    lineFollowerImg.setAttribute('id', 'lineFollowerImg');
+    lineFollowerImg.setAttribute('id', 'lineFollowerImg'+mode);
     lineFollowerImg.setAttribute('src', 'img/lineFollower_centered.png');
-    $("#lineFollower").append(lineFollowerImg);
+    $("#lineFollower"+mode).append(lineFollowerImg);
 };
 
 /*const setState = () => {
@@ -32,7 +32,7 @@ const initLineFollowerImg = () => {
 
 const updateLineFollowerImg = (state) => {
     // nous avons 4 images pour représenter les états du line follower
-    const lineFollowerImg = $("#lineFollowerImg")[0];
+    const lineFollowerImg = $("#lineFollowerImg"+Ihm)[0];
 
     if (lineFollowerImg) {
         switch (state) {
@@ -60,7 +60,8 @@ const updateLineFollowerImg = (state) => {
 
 $(document).ready(function(){
     (function test () {
-        initLineFollowerImg();
+        initLineFollowerImg("MANU");
+        initLineFollowerImg("PILOT");
         // for (let i = 0; i < 4; i++) {
         //     setTimeout(function() {
         //         let state = i;
