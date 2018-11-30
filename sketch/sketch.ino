@@ -4,6 +4,9 @@
 #include <math.h>
 #include <queue>
 
+#define FIFTEEN_MMS_LIMIT 65
+#define EIGHTY_MMS_LIMIT 255
+
 using namespace std;
 
 Bluetooth bluetooth;
@@ -18,7 +21,6 @@ MeLightSensor lightSensor(PORT_6);
 MeRGBLed led(PORT_7);
 
 bool autoPilot = false;
-uint8_t maxMotorValue = 255;
 int previousSensorState = -1;
 queue<float> yellowDetection;
 queue<float> redDetection;
@@ -44,13 +46,17 @@ bool restartMotorsAfterDelay = false;
 int delayForMotorRestart = 100;
 
 int swapMotor = 1;
+bool speedThreshold = true;
+
+int lastx = 0;
+int lasty = 0;
 
 uint8_t motorValue(float speed) {
   float secondsPerMinute = 60;
   float wheelDiameter = 60;
   float maxMotorSpeed = 185;
   
-  return (secondsPerMinute * speed * maxMotorValue) / (wheelDiameter * PI * maxMotorSpeed);
+  return (secondsPerMinute * speed * EIGHTY_MMS_LIMIT) / (wheelDiameter * PI * maxMotorSpeed);
 }
 
 //////////// Robot control functions ///////////////////////
@@ -97,23 +103,23 @@ void manageAutopilot(){
       switch(sensorState) {
         case S1_IN_S2_IN:
           sendLine(true, true);
-          motor1Target = maxMotorValue;
-          motor2Target = -maxMotorValue;
+          motor1Target = EIGHTY_MMS_LIMIT;
+          motor2Target = -EIGHTY_MMS_LIMIT;
           break;
         case S1_IN_S2_OUT:
           sendLine(false, true);
-          motor1Target = maxMotorValue;
-          motor2Target = 0;
+          motor1Target = EIGHTY_MMS_LIMIT;
+          motor2Target = FIFTEEN_MMS_LIMIT;
           break;
         case S1_OUT_S2_IN:
           sendLine(true, false);
-          motor1Target = 0;
-          motor2Target = -maxMotorValue;
+          motor1Target = -FIFTEEN_MMS_LIMIT;
+          motor2Target = -EIGHTY_MMS_LIMIT;
           break;
         case S1_OUT_S2_OUT:
           sendLine(false, false);
-          motor1Target = -maxMotorValue/3;
-          motor2Target = +maxMotorValue/3;
+          motor1Target = -EIGHTY_MMS_LIMIT/3;
+          motor2Target = EIGHTY_MMS_LIMIT/3;
           break;
         default:
           break;
@@ -180,7 +186,7 @@ void proceedCommand(String command){
     if (autoPilot){
       autoPilotStop();
     } else {
-      if (lineFinder.readSensors() != S1_OUT_S2_OUT) {
+      if (lineFinder.readSensors() == S1_IN_S2_IN) {
         autoPilot = true;
         sendAutopilot(true);
         sendNextPhase();
@@ -192,7 +198,9 @@ void proceedCommand(String command){
   }
   if (command.substring(0,1) == String("M")){
     bluetooth.sendData("-LOG MOVING");
-    controlMove((int) command[1],(int) command[2]);
+    lastx = (int) command[1];
+    lasty = (int) command[2];
+    controlMove(lastx,lasty, speedThreshold);
   }
   if (command.substring(0,1) == String("C")){
     switch (command[1]) {
@@ -230,6 +238,20 @@ void proceedCommand(String command){
         break;
     }
   }
+  if (command.substring(0,1) == String("T")){
+    switch (command[1]) {
+      case 'D':
+        speedThreshold = false;
+        controlMove(lastx,lasty, speedThreshold);
+        break;
+      case 'E':
+        speedThreshold = true;
+        controlMove(lastx,lasty, speedThreshold);
+        break;
+      default:
+        break;
+    }
+  }
   if (command.substring(0,1) == String("R")){
     int way = 0;
     switch (command[1]) {
@@ -243,8 +265,8 @@ void proceedCommand(String command){
         way = 0;
         break;
     }
-    motor1.run(swapMotor * way * maxMotorValue);
-    motor2.run(swapMotor * way * maxMotorValue);
+    motor1.run(swapMotor * way * EIGHTY_MMS_LIMIT);
+    motor2.run(swapMotor * way * EIGHTY_MMS_LIMIT);
     waitedTime = millis() + 4000;
     restartMotorsAfterDelay = true;
     motor1Target = 0;

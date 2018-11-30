@@ -58,7 +58,8 @@ void listenToBluetooth(){
   while(1){
     getline(bluetoothReciever, data);
     if (data.size()){
-      sendMessageToIHM("LOG", data);
+      data[data.size() - 1] = '\0'; 
+      // sendMessageToIHM("LOG", data);
     }
     if (data[0] == 'S'){
       sendMessageToIHM("robot", "SPEED:" + to_string(data[1] - 1));
@@ -107,7 +108,7 @@ void openBrowser(int argc, char* argv[]){
    }
 
    cout << path << endl;
-    system(("firefox file://" + path + "/ROBAFIS_UI/home.html").c_str());
+  // system(("firefox file://" + path + "/ROBAFIS_UI/home.html 2>>/dev/null").c_str());
 }
 
 int main(int argc, char* argv[]) {
@@ -136,7 +137,7 @@ int main(int argc, char* argv[]) {
   // See RFC 6455 7.4.1. for status codes
   echo.on_close = [](shared_ptr<WsServer::Connection> connection, int status, const string & /*reason*/) {
     cout << "Server: Closed connection " << connection.get() << " with status code " << status << endl;
-    connections.erase(std::remove(connections.begin(), connections.end(), connection), connections.end());
+    //connections.erase(std::remove(connections.begin(), connections.end(), connection), connections.end());
   };
 
   thread server_thread([&server]() {
@@ -166,8 +167,10 @@ int main(int argc, char* argv[]) {
     c1.update(ev);
     controllerEvent cevent = c1.getLastEvent();
     if (cevent.robotMessage != ""){
-      sendMessageToIHM("controller", cevent.ihmMessage);
       sendMessageToRobot(cevent.robotMessage);
+    }
+    if (cevent.ihmMessage != ""){
+      sendMessageToIHM("controller", cevent.ihmMessage);
     }
   }
 
