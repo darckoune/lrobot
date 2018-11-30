@@ -52,7 +52,7 @@ circle.on('circle-animation-progress', function(e, v) {
   if(phase == 4 || phase == 5 ) {
     if(actualSpeed <= 15 ){
       ctx.font = "normal " + s / 2.5 + "px sans-serif";
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = "#99ff99";
       ctx.fillText(getActualSpeed(), s / 2, s / 2);
     } else {
       ctx.font = "normal " + s / 2.5 + "px sans-serif";
@@ -62,7 +62,7 @@ circle.on('circle-animation-progress', function(e, v) {
   } else {
     if(actualSpeed <= 80 ){
       ctx.font = "normal " + s / 2.5 + "px sans-serif";
-      ctx.fillStyle = "#ffffff";
+      ctx.fillStyle = "#99ff99";
       ctx.fillText(getActualSpeed(), s / 2, s / 2);
     } else {
       ctx.font = "normal " + s / 2.5 + "px sans-serif";
@@ -78,13 +78,13 @@ circle.on('circle-animation-progress', function(e, v) {
   ctx.fillText("Mm/s", s / 2, s / 1.35);
 
   //Distance parcourue
-  ctx.fillStyle = "#979fa7";
-  ctx.font="35px sans-serif";
-  ctx.fillText("Distance parcourue", s / 2, s / 1.2);
-
-  ctx.fillStyle = "#979fa7";
-  ctx.font="35px sans-serif";
-  ctx.fillText("100 m", s / 2, s / 1.135);
+  // ctx.fillStyle = "#979fa7";
+  // ctx.font="35px sans-serif";
+  // ctx.fillText("Distance parcourue", s / 2, s / 1.2);
+  //
+  // ctx.fillStyle = "#979fa7";
+  // ctx.font="35px sans-serif";
+  // ctx.fillText("100 m", s / 2, s / 1.135);
 
   ctx.restore();
 
