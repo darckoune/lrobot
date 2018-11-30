@@ -78,7 +78,9 @@ controllerEvent Controller::getLastEvent() {
     JSL_V.changed = false;
     int v = (-1 * JSL_V.value)/327;
     int h = (JSL_H.value)/327;
-    event.robotMessage = string("M") + string(1, v + 1) + string(1, h + 1);
+    if(checkLastJoystick(v, h)){
+      event.robotMessage = string("M") + string(1, v + 1) + string(1, h + 1);
+    }
     event.ihmMessage = string("MOVE:") + to_string(v) + ":" + to_string(h);
   }
   if (DPAD_V.changed){
@@ -122,7 +124,96 @@ controllerEvent Controller::getLastEvent() {
       event.ihmMessage = string("SWAP");
     }
   }
+  if(L1.changed){
+    L1.changed = false;
+    if(L1.value){
+      event.robotMessage = string("TD");
+      event.ihmMessage = string("THRESHOLD:DISABLED");
+    } else {
+      event.robotMessage = string("TE");
+      event.ihmMessage = string("THRESHOLD:ENABLED");
+    }
+  }
   return event;
+}
+
+bool Controller::checkLastJoystick(int x, int y){
+  int absx = abs(x);
+  int absy = abs(y);
+
+  int motor1Target;
+  int motor2Target;
+
+  int swapMotor = 1;
+
+  if (absx < FIRST_THRESHOLD && absy < FIRST_THRESHOLD){
+    motor1Target = 0;
+    motor2Target = 0;
+  } else if(absx < FIRST_THRESHOLD){
+    int yway = y > 0 ? 1 : -1;
+    int power;
+    if (absy < 50){
+      power = 50;
+    } else if (absy < SECOND_THRESHOLD){
+      power = 100;
+    } else {
+      power = 255;
+    }
+    motor1Target = -1 * swapMotor * yway * power;
+    motor2Target = yway * swapMotor * power;
+  } else if (absy < FIRST_THRESHOLD) {
+    int xway = x > 0 ? 1 : -1;
+    int power = absx < SECOND_THRESHOLD ? MEDIUM_SPEED : MAX_SPEED;
+    motor1Target = xway * power;
+    motor2Target = xway * power;
+  } else if(absy < SECOND_THRESHOLD){
+    int xway = x > 0 ? 1 : -1;
+    if (swapMotor == 1){
+      if (y > 0){
+        motor1Target = 0;
+        motor2Target = xway * MEDIUM_SPEED;
+      } else {
+        motor1Target = xway * MEDIUM_SPEED;
+        motor2Target = 0;
+      }
+    } else {
+      if (y > 0){
+        motor1Target = xway * MEDIUM_SPEED;
+        motor2Target = 0;
+      } else {
+        motor1Target = 0;
+        motor2Target = xway * MEDIUM_SPEED;
+      }
+    }
+  } else {
+    int xway = x > 0 ? 1 : -1;
+    int yway = y > 0 ? 1 : -1;
+    if (swapMotor == 1){
+      if (y > 0){
+        motor1Target = 0;
+        motor2Target = xway * MAX_SPEED;
+      } else {
+        motor1Target = xway * MAX_SPEED;
+        motor2Target = 0;
+      }
+    } else {
+      if (y > 0){
+        motor1Target = xway * MAX_SPEED;
+        motor2Target = 0;
+      } else {
+        motor1Target = 0;
+        motor2Target = xway * MAX_SPEED;
+      }
+    }
+  }
+
+  if (lastMotor1Target != motor1Target || lastMotor2Target != motor2Target){
+    lastMotor1Target = motor1Target;
+    lastMotor2Target = motor2Target;
+    return true;
+  } else {
+    return false;
+  }
 }
 
 void Controller::update(input_event ev) {
@@ -201,6 +292,9 @@ Controller::Controller(void) {
   R2     = {0 , false};
   DPAD_H = {0 , false};
   DPAD_V = {0 , false};
+
+  lastMotor1Target = 0;
+  lastMotor2Target = 0;
 
   // cout << "[CONTROLLER] object created" << endl;
 }

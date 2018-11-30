@@ -6,6 +6,12 @@
 #include <string.h>
 using namespace std;
 
+#define MAX_SPEED 65
+#define MEDIUM_SPEED 40
+
+#define FIRST_THRESHOLD 30
+#define SECOND_THRESHOLD 70
+
 struct booleanInput {
   bool value;
   bool changed;
@@ -47,9 +53,13 @@ class Controller {
   intInput  DPAD_H;
   intInput  DPAD_V;
 
+  int lastMotor1Target;
+  int lastMotor2Target;
+
   void setBooleanInputValue(booleanInput*, bool);
   void setIntInputValue(intInput*, int);
   void setIntAsBooleanInputValue(intInput*, int);
+  bool checkLastJoystick(int x, int y);
 
   // Methods
   public:

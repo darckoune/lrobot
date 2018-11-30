@@ -1,16 +1,23 @@
-#define MAX_SPEED 65
 #define MEDIUM_SPEED 40
 
-#define FIRST_THRESHOLD 20
+#define BOOST_MEDIUM_SPEED 100
+
+#define FIRST_THRESHOLD 30
 #define SECOND_THRESHOLD 70
 
-void controlMove(int x, int y){
+void controlMove(int x, int y, bool limited){
   //int power = - x;
   //int turn = y;
     
   //motor1Target = -power - turn;
   //motor2Target = power - turn;
 
+  x--;
+  y--;
+
+  int maxSpeed =  limited ? FIFTEEN_MMS_LIMIT : EIGHTY_MMS_LIMIT;
+  int mediumSpeed = limited ? MEDIUM_SPEED : BOOST_MEDIUM_SPEED;
+  
   bluetooth.sendData("-LOG x : " + String(x));
   bluetooth.sendData("-LOG y : " + String(y));
   
@@ -37,7 +44,7 @@ void controlMove(int x, int y){
   } else if (absy < FIRST_THRESHOLD) {
     bluetooth.sendData("-LOG Case 2");
     int xway = x > 0 ? 1 : -1;
-    int power = absx < SECOND_THRESHOLD ? MEDIUM_SPEED : MAX_SPEED;
+    int power = absx < SECOND_THRESHOLD ? mediumSpeed : maxSpeed;
     motor1Target = xway * power;
     motor2Target = xway * power;
   } else if(absy < SECOND_THRESHOLD){
@@ -46,18 +53,18 @@ void controlMove(int x, int y){
     if (swapMotor == 1){
       if (y > 0){
         motor1Target = 0;
-        motor2Target = xway * MEDIUM_SPEED;
+        motor2Target = xway * mediumSpeed;
       } else {
-        motor1Target = xway * MEDIUM_SPEED;
+        motor1Target = xway * mediumSpeed;
         motor2Target = 0;
       }
     } else {
       if (y > 0){
-        motor1Target = xway * MEDIUM_SPEED;
+        motor1Target = xway * mediumSpeed;
         motor2Target = 0;
       } else {
         motor1Target = 0;
-        motor2Target = xway * MEDIUM_SPEED;
+        motor2Target = xway * mediumSpeed;
       }
     }
   } else {
@@ -67,18 +74,18 @@ void controlMove(int x, int y){
     if (swapMotor == 1){
       if (y > 0){
         motor1Target = 0;
-        motor2Target = xway * MAX_SPEED;
+        motor2Target = xway * maxSpeed;
       } else {
-        motor1Target = xway * MAX_SPEED;
+        motor1Target = xway * maxSpeed;
         motor2Target = 0;
       }
     } else {
       if (y > 0){
-        motor1Target = xway * MAX_SPEED;
+        motor1Target = xway * maxSpeed;
         motor2Target = 0;
       } else {
         motor1Target = 0;
-        motor2Target = xway * MAX_SPEED;
+        motor2Target = xway * maxSpeed;
       }
     }
     
