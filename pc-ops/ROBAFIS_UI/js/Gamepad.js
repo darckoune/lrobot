@@ -110,7 +110,7 @@ addWebsocketCallback(function(data) {
   }
 });
 
-$(document).ready(function(){
+$(window).on("load", function() {
   imgGamepad = document.getElementById("gamepadImg");
   canvasGamepad = document.getElementById("gamepad");
   canvasGamepad.width = imgGamepad.width;
