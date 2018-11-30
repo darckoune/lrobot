@@ -34,12 +34,12 @@ function changeIHM() {
   if (Ihm == "PILOT") {
     $("#bras").css('display', 'block');
     $("#pince").css('display', 'block');
-    $('#colorDetection').css('display', 'none');
+    $('#colorDetection').css('display', 'block');
     $('#lineFollower').css('display', 'none');
   } else {
     $("#bras").css('display', 'none');
     $("#pince").css('display', 'none');
-    $('#colorDetection').css('display', 'block');
+    $('#colorDetection').css('display', 'none');
     $('#lineFollower').css('display', 'block');
   }
 }
@@ -48,12 +48,12 @@ function choseIHM(type) {
   if (type == "MANU") {
     $("#bras").css('display', 'block');
     $("#pince").css('display', 'block');
-    $('#colorDetection').css('display', 'none');
+    $('#colorDetection').css('display', 'block');
     $('#lineFollower').css('display', 'none');
   } else if (type == "PILOT") {
     $("#bras").css('display', 'none');
     $("#pince").css('display', 'none');
-    $('#colorDetection').css('display', 'block');
+    $('#colorDetection').css('display', 'none');
     $('#lineFollower').css('display', 'block');
   }
 }
