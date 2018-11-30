@@ -1,6 +1,6 @@
-var img;
-var canvas;
-var ctx;
+var imgGamepad;
+var canvasGamepad;
+var ctxGamepad;
 
 var joy1;
 var joy2;
@@ -87,14 +87,14 @@ addWebsocketCallback(function(data) {
       }
     }
 
-    ctx.drawImage(img, 0, 0);
-    ctx.fillStyle = "#AAAAAA";
-    ctx.beginPath();
-    ctx.arc(129, 90, 5, 0, 2*Math.PI);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(169, 90, 5, 0, 2*Math.PI);
-    ctx.fill();
+    ctxGamepad.drawImage(imgGamepad, 0, 0);
+    ctxGamepad.fillStyle = "#AAAAAA";
+    ctxGamepad.beginPath();
+    ctxGamepad.arc(129, 90, 5, 0, 2*Math.PI);
+    ctxGamepad.fill();
+    ctxGamepad.beginPath();
+    ctxGamepad.arc(169, 90, 5, 0, 2*Math.PI);
+    ctxGamepad.fill();
 
     joy1.draw();
     joy2.draw();
@@ -111,38 +111,38 @@ addWebsocketCallback(function(data) {
 });
 
 $(document).ready(function(){
-  img = document.getElementById("gamepadImg");
-  canvas = document.getElementById("gamepad");
-  canvas.width = img.width;
-  canvas.height = img.height;
-  ctx = canvas.getContext("2d");
+  imgGamepad = document.getElementById("gamepadImg");
+  canvasGamepad = document.getElementById("gamepad");
+  canvasGamepad.width = imgGamepad.width;
+  canvasGamepad.height = imgGamepad.height;
+  ctxGamepad = canvasGamepad.getContext("2d");
 
-  ctx.drawImage(img, 0, 0);
-  ctx.fillStyle = "#AAAAAA";
-  ctx.beginPath();
-  ctx.arc(129, 90, 5, 0, 2*Math.PI);
-  ctx.fill();
-  ctx.beginPath();
-  ctx.arc(169, 90, 5, 0, 2*Math.PI);
-  ctx.fill();
+  ctxGamepad.drawImage(imgGamepad, 0, 0);
+  ctxGamepad.fillStyle = "#AAAAAA";
+  ctxGamepad.beginPath();
+  ctxGamepad.arc(129, 90, 5, 0, 2*Math.PI);
+  ctxGamepad.fill();
+  ctxGamepad.beginPath();
+  ctxGamepad.arc(169, 90, 5, 0, 2*Math.PI);
+  ctxGamepad.fill();
 
-  joy1         = new JoyStick(ctx, 71, 104.5, 20, 15, "#CCCCCC");
+  joy1         = new JoyStick(ctxGamepad, 71, 104.5, 20, 15, "#CCCCCC");
   joy1.draw();
-  joy2         = new JoyStick(ctx, 189.5, 156, 20, 15, "#CCCCCC");
+  joy2         = new JoyStick(ctxGamepad, 189.5, 156, 20, 15, "#CCCCCC");
   joy2.draw();
-  buttonA      = new RoundButton(ctx, 226, 125, 11, "#FFFFFF44");
-  buttonB      = new RoundButton(ctx, 246, 104.5, 11, "#FFFFFF44");
-  buttonX      = new RoundButton(ctx, 205, 104.5, 11, "#FFFFFF44");
-  buttonY      = new RoundButton(ctx, 225.5, 84, 11, "#FFFFFF44");
-  buttonSELECT = new RoundButton(ctx, 129, 90, 5, "#FFFFFF44");
-  buttonSTART  = new RoundButton(ctx, 169, 90, 5, "#FFFFFF44");
-  dpadLeft     = new SquareButton(ctx, 82, 144.5, 10, 20, 2, "#FFFFFFAA");
-  dpadUp       = new SquareButton(ctx, 103.5, 124, 20, 10, 2, "#FFFFFFAA");
-  dpadRight    = new SquareButton(ctx, 134, 144.5, 10, 20, 2, "#FFFFFFAA");
-  dpadDown     = new SquareButton(ctx, 103.5, 174.5, 20, 10, 2, "#FFFFFFAA");
-  buttonXbox   = new XboxButton(ctx, "#FFFF00");
-  triggerL1    = new CustomButton(ctx, [49,64], [91,49], [102,55], [46,75], "#CCCCCC");
-  triggerL2    = new CustomButton(ctx, [53,44], [74,37], [84,43], [50,55], "#CCCCCC");
-  triggerR1    = new CustomButton(ctx, [209,49], [251,64], [254,75], [198,55], "#CCCCCC");
-  triggerR2    = new CustomButton(ctx, [226,37], [247,44], [250,55], [216,43], "#CCCCCC");
+  buttonA      = new RoundButton(ctxGamepad, 226, 125, 11, "#FFFFFF44");
+  buttonB      = new RoundButton(ctxGamepad, 246, 104.5, 11, "#FFFFFF44");
+  buttonX      = new RoundButton(ctxGamepad, 205, 104.5, 11, "#FFFFFF44");
+  buttonY      = new RoundButton(ctxGamepad, 225.5, 84, 11, "#FFFFFF44");
+  buttonSELECT = new RoundButton(ctxGamepad, 129, 90, 5, "#FFFFFF44");
+  buttonSTART  = new RoundButton(ctxGamepad, 169, 90, 5, "#FFFFFF44");
+  dpadLeft     = new SquareButton(ctxGamepad, 82, 144.5, 10, 20, 2, "#FFFFFFAA");
+  dpadUp       = new SquareButton(ctxGamepad, 103.5, 124, 20, 10, 2, "#FFFFFFAA");
+  dpadRight    = new SquareButton(ctxGamepad, 134, 144.5, 10, 20, 2, "#FFFFFFAA");
+  dpadDown     = new SquareButton(ctxGamepad, 103.5, 174.5, 20, 10, 2, "#FFFFFFAA");
+  buttonXbox   = new XboxButton(ctxGamepad, "#FFFF00");
+  triggerL1    = new CustomButton(ctxGamepad, [49,64], [91,49], [102,55], [46,75], "#CCCCCC");
+  triggerL2    = new CustomButton(ctxGamepad, [53,44], [74,37], [84,43], [50,55], "#CCCCCC");
+  triggerR1    = new CustomButton(ctxGamepad, [209,49], [251,64], [254,75], [198,55], "#CCCCCC");
+  triggerR2    = new CustomButton(ctxGamepad, [226,37], [247,44], [250,55], [216,43], "#CCCCCC");
 });

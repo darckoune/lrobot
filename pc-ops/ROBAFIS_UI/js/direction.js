@@ -47,10 +47,6 @@ const initArrowImg = () => {
     $("#arrow").append(arrowImg);
 };
 
-const setState = () => {
-    //TODO
-}
-
 const updateArrowImg = (state) => {
     const arrowImg = $("#arrowImg")[0];
 

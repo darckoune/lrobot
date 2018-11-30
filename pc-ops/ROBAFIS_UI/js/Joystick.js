@@ -1,6 +1,6 @@
 class JoyStick {
-  constructor(ctx, posX, posY, size, range, color) {
-    this.ctx   = ctx;
+  constructor(ctxGamepad, posX, posY, size, range, color) {
+    this.ctxGamepad   = ctxGamepad;
     this.posX  = posX;
     this.posY  = posY;
     this.size  = size;
@@ -12,19 +12,19 @@ class JoyStick {
   }
 
   draw() {
-    ctx.lineWidth = 2;
-    ctx.fillStyle = this.color;
-    ctx.strokeStyle = this.color;
+    ctxGamepad.lineWidth = 2;
+    ctxGamepad.fillStyle = this.color;
+    ctxGamepad.strokeStyle = this.color;
 
-    ctx.beginPath(); // internal circle
-    ctx.arc(this.posX, this.posY, this.size, 0, 2*Math.PI);
-    ctx.stroke();
+    ctxGamepad.beginPath(); // internal circle
+    ctxGamepad.arc(this.posX, this.posY, this.size, 0, 2*Math.PI);
+    ctxGamepad.stroke();
 
     var x = this.posX + (this.valX / 100) * this.range;
     var y = this.posY + (this.valY / 100) * this.range;
-    ctx.beginPath(); // external circle
-    ctx.arc(x, y, this.size - 5, 0, 2*Math.PI);
-    ctx.fill();
+    ctxGamepad.beginPath(); // external circle
+    ctxGamepad.arc(x, y, this.size - 5, 0, 2*Math.PI);
+    ctxGamepad.fill();
   }
 
   setXY(nValX, nValY) {

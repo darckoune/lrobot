@@ -1,6 +1,6 @@
 class RoundButton {
-  constructor(ctx, posX, posY, size,color) {
-    this.ctx   = ctx;
+  constructor(ctxGamepad, posX, posY, size,color) {
+    this.ctxGamepad   = ctxGamepad;
     this.posX  = posX;
     this.posY  = posY;
     this.size  = size;
@@ -8,13 +8,13 @@ class RoundButton {
   }
 
   draw() {
-    ctx.lineWidth = 1;
-    ctx.fillStyle = this.color;
-    ctx.strokeStyle = this.color;
+    ctxGamepad.lineWidth = 1;
+    ctxGamepad.fillStyle = this.color;
+    ctxGamepad.strokeStyle = this.color;
 
-    ctx.beginPath();
-    ctx.arc(this.posX, this.posY, this.size, 0, 2*Math.PI);
-    ctx.fill();
+    ctxGamepad.beginPath();
+    ctxGamepad.arc(this.posX, this.posY, this.size, 0, 2*Math.PI);
+    ctxGamepad.fill();
   }
 
 }
