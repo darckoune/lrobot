@@ -27,7 +27,7 @@ int bufferSize = 15;
 float yellowSum = 0;
 float redSum = 0;
 float greenSum = 0;
-float yellowThreshold = -80.0;
+float yellowThreshold = -65.0;
 float redThreshold = -25.0;
 float greenThreshold = 10.0;
 
@@ -72,6 +72,9 @@ void autoPilotStop() {
   emptyQueue(yellowDetection);
   emptyQueue(redDetection);
   emptyQueue(greenDetection);
+  yellowSum = 0;
+  redSum = 0;
+  greenSum = 0;
 }
 
 void updateQueue(queue<float>& queue, float& sum, float value) {
@@ -128,7 +131,7 @@ void manageAutopilot(){
     float blueValue = lightSensor.read();
 
     updateQueue(yellowDetection, yellowSum, yellowValue / blueValue);
-    bool yellowDetected = yellowDetection.size() == bufferSize && getValue(yellowDetection, yellowSum) < yellowThreshold;
+    bool yellowDetected = (yellowDetection.size() == bufferSize) && (getValue(yellowDetection, yellowSum) < yellowThreshold);
 
     led.setColor(255, 0, 0);
     led.show();
@@ -139,7 +142,7 @@ void manageAutopilot(){
     float cyanValue = lightSensor.read();
 
     updateQueue(redDetection, redSum, redValue / cyanValue);
-    bool redDetected = redDetection.size() == bufferSize && getValue(redDetection, redSum) < redThreshold;
+    bool redDetected = (redDetection.size() == bufferSize) && (getValue(redDetection, redSum) < redThreshold);
 
     led.setColor(0, 255, 0);
     led.show();
@@ -150,7 +153,7 @@ void manageAutopilot(){
     float magentaValue = lightSensor.read();
     
     updateQueue(greenDetection, greenSum, greenValue / magentaValue);
-    bool greenDetected = greenDetection.size() == bufferSize && getValue(greenDetection, greenSum) < greenThreshold;
+    bool greenDetected = (greenDetection.size() == bufferSize) && (getValue(greenDetection, greenSum) < greenThreshold);
   
     if (yellowDetected || redDetected || greenDetected) {
       autoPilotStop();
@@ -177,10 +180,11 @@ void proceedCommand(String command){
     if (autoPilot){
       autoPilotStop();
     } else {
-      // Implémenter une véfification de la présence de la ligne
-      autoPilot = true;
-      sendAutopilot(true);
-      sendNextPhase();
+      if (lineFinder.readSensors() != S1_OUT_S2_OUT) {
+        autoPilot = true;
+        sendAutopilot(true);
+        sendNextPhase();
+      }
     }
   }
   if(autoPilot){
