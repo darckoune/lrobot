@@ -22,6 +22,7 @@ MeRGBLed led(PORT_7);
 
 bool autoPilot = false;
 int previousSensorState = -1;
+int previousInfoSensorState = -1;
 queue<float> yellowDetection;
 queue<float> redDetection;
 queue<float> greenDetection;
@@ -97,27 +98,44 @@ float getValue(queue<float> queue, float sum) {
 }
 
 void manageAutopilot(){
+  int sensorState = lineFinder.readSensors();
+  if (sensorState != previousInfoSensorState) {
+    switch(sensorState) {
+      case S1_IN_S2_IN:
+        sendLine(true, true);
+        break;
+      case S1_IN_S2_OUT:
+        sendLine(false, true);
+        break;
+      case S1_OUT_S2_IN:
+        sendLine(true, false);
+        break;
+      case S1_OUT_S2_OUT:
+        sendLine(false, false);
+        break;
+      default:
+        break;
+    }
+    
+    previousInfoSensorState = sensorState;
+  }
   if (autoPilot) {
-    int sensorState = lineFinder.readSensors();
+    sensorState = lineFinder.readSensors();
     if (sensorState != previousSensorState) {
       switch(sensorState) {
         case S1_IN_S2_IN:
-          sendLine(true, true);
           motor1Target = EIGHTY_MMS_LIMIT;
           motor2Target = -EIGHTY_MMS_LIMIT;
           break;
         case S1_IN_S2_OUT:
-          sendLine(false, true);
           motor1Target = EIGHTY_MMS_LIMIT;
           motor2Target = FIFTEEN_MMS_LIMIT;
           break;
         case S1_OUT_S2_IN:
-          sendLine(true, false);
           motor1Target = -FIFTEEN_MMS_LIMIT;
           motor2Target = -EIGHTY_MMS_LIMIT;
           break;
         case S1_OUT_S2_OUT:
-          sendLine(false, false);
           motor1Target = -EIGHTY_MMS_LIMIT/3;
           motor2Target = EIGHTY_MMS_LIMIT/3;
           break;
@@ -188,6 +206,7 @@ void proceedCommand(String command){
     } else {
       if (lineFinder.readSensors() == S1_IN_S2_IN) {
         autoPilot = true;
+        swapMotor = 1;
         sendAutopilot(true);
         sendNextPhase();
       }

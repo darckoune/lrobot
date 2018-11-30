@@ -1,5 +1,5 @@
 void sendSpeed(int motor1, int motor2){
-  int s = (((motor1 * 83) /255) + ((motor2 * 83) / 255))/2;
+  int s = (((motor1 * 77) /255) + ((motor2 * 77) / 255))/2;
   if(s < 0){
     s = -s; 
   }
