@@ -15,18 +15,18 @@ addWebsocketCallback(function(data){
     }
   }
 
-  if(data.type == "controller") {
-    var str = data.message;
-    var strCopy = str.split(':');
-    if(strCopy[1] == "MANU") {
-      var Ihm = "MANU";
-      changeIHM();
-    }
-    if(strCopy[1] == "PILOT") {
-      var Ihm = "PILOT";
-      changeIHM();
-    }
-  }
+  // if(data.type == "controller") {
+  //   var str = data.message;
+  //   var strCopy = str.split(':');
+  //   if(strCopy[1] == "MANU") {
+  //     var Ihm = "MANU";
+  //     changeIHM();
+  //   }
+  //   if(strCopy[1] == "PILOT") {
+  //     var Ihm = "PILOT";
+  //     changeIHM();
+  //   }
+  // }
 });
 
 // Fonction pour passer de IHM manu à pilot
@@ -73,4 +73,3 @@ function choseIHM(type) {
       $('#circle'+i).css('background-color', '#075C93');
     }
   }
-  

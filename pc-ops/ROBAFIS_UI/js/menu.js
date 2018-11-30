@@ -1,15 +1,18 @@
 var strCopyMenu = '';
 
 addWebsocketCallback(function(data){
-  if(data.type == "controller") {
+  if(data.type == "robot") {
     var str     = data.message;
     strCopyMenu = str.split(':');
     var links   = document.querySelectorAll(".mynav a");
-    if(strCopyMenu[1] == "PILOT") {
-      links[0].click();
-    }
-    if(strCopyMenu[1] == "MANU") {
-      links[1].click();
+    if(strCopyMenu[0] == 'STEP') {
+      valideEtat(strCopyMenu[1]);
+      phase = strCopyMenu[1];
+      if (phase == 0 || phase == 1 || phase == 3 || phase == 5 || phase == 6){
+        links[0].click();
+      } else {
+        links[1].click();
+      }
     }
   }
 });
