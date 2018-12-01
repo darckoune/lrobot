@@ -20,29 +20,29 @@ using namespace std;
 
 using WsServer = SimpleWeb::SocketServer<SimpleWeb::WS>;
 
-vector<shared_ptr<WsServer::Connection>> connections;
+shared_ptr<WsServer::Connection> websocketConnection;
 
 ofstream bluetooth;
 
-int phase = 0;
+int phase = 2;
 
 void sendMessageToIHM(string type, string message){
-  string jsonMessage = "{\"type\":\"" + type + "\",\"message\":\"" + message + "\"}";
-  cout << "Sending to " << connections.size() << " websocket(s) : " << jsonMessage << endl;
+  if(websocketConnection){
+    string jsonMessage = "{\"type\":\"" + type + "\",\"message\":\"" + message + "\"}";
+    cout << "Sending to websocket : " << jsonMessage << endl;
 
-  for(std::vector<int>::size_type i = 0; i != connections.size(); i++) {
-
-    shared_ptr<WsServer::Connection> connection = connections[i];
     auto send_stream = make_shared<WsServer::SendStream>();
     *send_stream << jsonMessage;
 
-    connection->send(send_stream, [](const SimpleWeb::error_code &ec) {
+    websocketConnection->send(send_stream, [](const SimpleWeb::error_code &ec) {
       if(ec) {
         cout << "Server: Error sending message. " <<
             // See http://www.boost.org/doc/libs/1_55_0/doc/html/boost_asio/reference.html, Error Codes for error code meanings
             "Error: " << ec << ", error message: " << ec.message() << endl;
       }
     });
+  } else {
+    cout << "No IHM connected to send the message to." << endl;
   }
 }
 
@@ -57,9 +57,9 @@ void listenToBluetooth(){
   ifstream bluetoothReciever ("/dev/rfcomm0", ifstream::binary); // changer pour /dev/rfcomm0 pour écouter le vrai bluetooth
   while(1){
     getline(bluetoothReciever, data);
-    if (data.size()){
+    if (data.size() && data[0] != 'Z'){
       data[data.size() - 1] = '\0'; 
-      // sendMessageToIHM("LOG", data);
+      sendMessageToIHM("LOG", data);
     }
     if (data[0] == 'S'){
       sendMessageToIHM("robot", "SPEED:" + to_string(data[1] - 1));
@@ -131,7 +131,7 @@ int main(int argc, char* argv[]) {
 
   echo.on_open = [](shared_ptr<WsServer::Connection> connection) {
     cout << "Server: Opened connection " << connection.get() << endl;
-    connections.push_back(connection);
+    websocketConnection = connection;
   };
 
   // See RFC 6455 7.4.1. for status codes
@@ -156,7 +156,7 @@ int main(int argc, char* argv[]) {
 
   };
 
-  std::thread t{listenToBluetooth};
+  //std::thread t{listenToBluetooth};
 
   //////////////////////////////////////////////
   //////////////// MAIN LOOP ///////////////////
@@ -166,11 +166,16 @@ int main(int argc, char* argv[]) {
     read(fd, &ev, sizeof(struct input_event));
     c1.update(ev);
     controllerEvent cevent = c1.getLastEvent();
-    if (cevent.robotMessage != ""){
-      sendMessageToRobot(cevent.robotMessage);
-    }
-    if (cevent.ihmMessage != ""){
-      sendMessageToIHM("controller", cevent.ihmMessage);
+    if (cevent.ihmMessage == "STEP:0"){
+      phase = 0;
+      sendMessageToIHM("robot", "STEP:0");
+    } else {
+      if (cevent.robotMessage != ""){
+        sendMessageToRobot(cevent.robotMessage);
+      }
+      if (cevent.ihmMessage != ""){
+        sendMessageToIHM("controller", cevent.ihmMessage);
+      }
     }
   }
 

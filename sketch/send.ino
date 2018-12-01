@@ -1,9 +1,11 @@
+#define DELAY_ALIVE 100
+
 void sendSpeed(int motor1, int motor2){
   int s = (((motor1 * 77) /255) + ((motor2 * 77) / 255))/2;
   if(s < 0){
     s = -s; 
   }
-  bluetooth.sendData("-LOG: speed " + String(s));
+  // bluetooth.sendData("-LOG: speed " + String(s));
   bluetooth.sendData("S" + String((char) (s + 1)));
 }
 
@@ -31,4 +33,13 @@ void sendAutopilot(bool autopilotStatus){
 
 void sendNextPhase(){
   bluetooth.sendData("N");
+}
+
+long alive = 0;
+
+void sendImAlive(){
+  if (millis() - alive > DELAY_ALIVE){
+    bluetooth.sendData(String("Z"));
+    alive = millis();  
+  }
 }

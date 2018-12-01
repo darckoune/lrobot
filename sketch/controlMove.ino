@@ -18,18 +18,18 @@ void controlMove(int x, int y, bool limited){
   int maxSpeed =  limited ? FIFTEEN_MMS_LIMIT : EIGHTY_MMS_LIMIT;
   int mediumSpeed = limited ? MEDIUM_SPEED : BOOST_MEDIUM_SPEED;
   
-  bluetooth.sendData("-LOG x : " + String(x));
-  bluetooth.sendData("-LOG y : " + String(y));
+  // bluetooth.sendData("-LOG x : " + String(x));
+  // bluetooth.sendData("-LOG y : " + String(y));
   
   int absx = abs(x);
   int absy = abs(y);
 
   if (absx < FIRST_THRESHOLD && absy < FIRST_THRESHOLD){
-    bluetooth.sendData("-LOG Case 0");
+    // bluetooth.sendData("-LOG Case 0");
     motor1Target = 0;
     motor2Target = 0;
   } else if(absx < FIRST_THRESHOLD){
-    bluetooth.sendData("-LOG Case 1");
+    // bluetooth.sendData("-LOG Case 1");
     int yway = y > 0 ? 1 : -1;
     int power;
     if (absy < 50){
@@ -42,13 +42,13 @@ void controlMove(int x, int y, bool limited){
     motor1Target = -1 * swapMotor * yway * power;
     motor2Target = yway * swapMotor * power;
   } else if (absy < FIRST_THRESHOLD) {
-    bluetooth.sendData("-LOG Case 2");
+    // bluetooth.sendData("-LOG Case 2");
     int xway = x > 0 ? 1 : -1;
     int power = absx < SECOND_THRESHOLD ? mediumSpeed : maxSpeed;
     motor1Target = xway * power;
     motor2Target = xway * power;
   } else if(absy < SECOND_THRESHOLD){
-    bluetooth.sendData("-LOG Case 3");
+    // bluetooth.sendData("-LOG Case 3");
     int xway = x > 0 ? 1 : -1;
     if (swapMotor == 1){
       if (y > 0){
@@ -68,7 +68,7 @@ void controlMove(int x, int y, bool limited){
       }
     }
   } else {
-    bluetooth.sendData("-LOG Case 4");
+    // bluetooth.sendData("-LOG Case 4");
     int xway = x > 0 ? 1 : -1;
     int yway = y > 0 ? 1 : -1;
     if (swapMotor == 1){

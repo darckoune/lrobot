@@ -134,6 +134,12 @@ controllerEvent Controller::getLastEvent() {
       event.ihmMessage = string("THRESHOLD:ENABLED");
     }
   }
+  if(SELECT.changed){
+    SELECT.changed = false;
+    if(SELECT.value){
+      event.ihmMessage = string("STEP:0");
+    }
+  }
   return event;
 }
 

@@ -383,6 +383,8 @@ void setup() {
 }
 
 void loop() {
+  sendImAlive();
+  
   restartMotorsIfNeeded();
 
   manageCommands();
