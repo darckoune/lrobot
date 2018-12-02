@@ -24,7 +24,7 @@ shared_ptr<WsServer::Connection> websocketConnection;
 
 ofstream bluetooth;
 
-int phase = 2;
+int phase = 0;
 
 void sendMessageToIHM(string type, string message){
   if(websocketConnection){
@@ -57,10 +57,10 @@ void listenToBluetooth(){
   ifstream bluetoothReciever ("/dev/rfcomm0", ifstream::binary); // changer pour /dev/rfcomm0 pour écouter le vrai bluetooth
   while(1){
     getline(bluetoothReciever, data);
-    if (data.size() && data[0] != 'Z'){
-      data[data.size() - 1] = '\0'; 
-      sendMessageToIHM("LOG", data);
-    }
+    // if (data.size() && data[0] != 'Z'){
+    //   data[data.size() - 1] = '\0'; 
+    //   sendMessageToIHM("LOG", data);
+    // }
     if (data[0] == 'S'){
       sendMessageToIHM("robot", "SPEED:" + to_string(data[1] - 1));
     } else if (data[0] == 'L'){
@@ -156,7 +156,7 @@ int main(int argc, char* argv[]) {
 
   };
 
-  //std::thread t{listenToBluetooth};
+  std::thread t{listenToBluetooth};
 
   //////////////////////////////////////////////
   //////////////// MAIN LOOP ///////////////////
