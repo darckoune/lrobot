@@ -7,7 +7,11 @@ addWebsocketCallback(function(data){
     if(strCopy[0] == 'STEP') {
       valideEtat(strCopy[1]);
       phase = strCopy[1];
-      if (phase == 0 || phase == 1 || phase == 3 || phase == 5 || phase == 6){
+      if (phase == 0) {
+        choseIHM("PILOT");
+        init();
+      }
+      if (phase == 1 || phase == 3 || phase == 5 || phase == 6){
         choseIHM("PILOT");
       } else {
         choseIHM("MANU");
