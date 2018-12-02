@@ -79,7 +79,7 @@ addWebsocketCallback(function(data) {
     }
 
     if(strCopy[0] == "MOVE") { // joy L
-      joy1.setXY(strCopy[1], strCopy[2]);
+      joy1.setXY(strCopy[2], strCopy[1]);
     }
 
     if(strCopy[1] == "PILOT" || strCopy[1] == "MANU") {
