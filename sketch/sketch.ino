@@ -181,7 +181,14 @@ void manageAutopilot(){
     
     updateQueue(greenDetection, greenSum, greenValue / magentaValue);
     bool greenDetected = (greenDetection.size() == bufferSize) && (getValue(greenDetection, greenSum) < greenThreshold);
-  
+
+    /*Serial3.print("y = ");
+    Serial3.print(getValue(yellowDetection, yellowSum));
+    Serial3.print(" r = ");
+    Serial3.print(getValue(redDetection, redSum));
+    Serial3.print(" g = ");
+    Serial3.println(getValue(greenDetection, greenSum));*/
+
     if (yellowDetected || redDetected || greenDetected) {
       autoPilotStop();
       sendColor(yellowDetected, redDetected, greenDetected);
