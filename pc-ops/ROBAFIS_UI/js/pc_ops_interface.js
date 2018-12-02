@@ -13,7 +13,7 @@ addWebsocketCallback(function(data){
       }
       if (phase == 1 || phase == 3 || phase == 5 || phase == 6){
         choseIHM("PILOT");
-      } else {
+      } else if (phase == 2 || phase == 4 ){
         choseIHM("MANU");
       }
     }
