@@ -29,6 +29,6 @@ class JoyStick {
 
   setXY(nValX, nValY) {
     this.valX = nValX;
-    this.valY = nValY;
+    this.valY = -1 * nValY;
   }
 }
