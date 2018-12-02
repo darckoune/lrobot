@@ -1,9 +1,13 @@
 #define DELAY_ALIVE 100
+#define SPEED_RATIO 78
 
 void sendSpeed(int motor1, int motor2){
-  int s = (((motor1 * 77) /255) + ((motor2 * 77) / 255))/2;
+  int s = (((motor1 * SPEED_RATIO) /255) + ((motor2 * SPEED_RATIO) / 255))/2;
   if(s < 0){
     s = -s; 
+  }
+  if (s == 16){
+    s = 15;
   }
   // bluetooth.sendData("-LOG: speed " + String(s));
   bluetooth.sendData("S" + String((char) (s + 1)));

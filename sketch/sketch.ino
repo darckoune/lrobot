@@ -4,7 +4,7 @@
 #include <math.h>
 #include <queue>
 
-#define FIFTEEN_MMS_LIMIT 65
+#define FIFTEEN_MMS_LIMIT 55
 #define EIGHTY_MMS_LIMIT 255
 
 using namespace std;
