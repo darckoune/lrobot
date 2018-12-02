@@ -140,6 +140,13 @@ controllerEvent Controller::getLastEvent() {
       event.ihmMessage = string("STEP:0");
     }
   }
+  if(SELECT.changed || START.changed){
+    START.changed = false;
+    SELECT.changed = false;
+    if(SELECT.value && START.value){
+      event.robotMessage = "X";
+    }
+  }
   return event;
 }
 

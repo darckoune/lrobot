@@ -52,6 +52,9 @@ bool speedThreshold = true;
 int lastx = 0;
 int lasty = 0;
 
+bool audit = false;
+int auditPhase = 1;
+
 uint8_t motorValue(float speed) {
   float secondsPerMinute = 60;
   float wheelDiameter = 60;
@@ -296,6 +299,11 @@ void proceedCommand(String command){
   if (command.substring(0,1) == String("S")){
     swapMotor = swapMotor * -1;
   }
+  if (command.substring(0,1) == String("X")){ // audit
+    audit = true;
+    auditPhase = 1;
+    previousSensorState = -1;
+  }
 }
 
 void updateMotors(){
@@ -384,12 +392,14 @@ void setup() {
 
 void loop() {
   sendImAlive();
-  
   restartMotorsIfNeeded();
 
-  manageCommands();
-
-  manageAutopilot();
+  if(audit){
+    manageAudit();
+  } else {
+    manageCommands();
+    manageAutopilot();
+  }
   
   updateMotors();
 }

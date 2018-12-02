@@ -169,13 +169,12 @@ int main(int argc, char* argv[]) {
     if (cevent.ihmMessage == "STEP:0"){
       phase = 0;
       sendMessageToIHM("robot", "STEP:0");
-    } else {
-      if (cevent.robotMessage != ""){
-        sendMessageToRobot(cevent.robotMessage);
-      }
-      if (cevent.ihmMessage != ""){
-        sendMessageToIHM("controller", cevent.ihmMessage);
-      }
+    }
+    if (cevent.robotMessage != ""){
+      sendMessageToRobot(cevent.robotMessage);
+    }
+    if (cevent.ihmMessage != ""){
+      sendMessageToIHM("controller", cevent.ihmMessage);
     }
   }
 
