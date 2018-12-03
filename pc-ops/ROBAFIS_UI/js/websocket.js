@@ -53,3 +53,12 @@ onWebsocket = function(data){
 function addWebsocketCallback(callback){
     onWebsocketCallbacks.push(callback);
 }
+
+addWebsocketCallback((data) => {
+    if(data.type == "robot" && data.message == "ALIVE"){
+        $('#bluetooth').css('background-color', 'red');
+        setTimeout(() => {
+            $('#bluetooth').css('background-color', 'transparent');
+        }, 50)
+    }
+});

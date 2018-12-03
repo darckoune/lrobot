@@ -4,6 +4,7 @@
 #include <math.h>
 #include <queue>
 
+#define RED_BUFFER_SIZE 1
 #define FIFTEEN_MMS_LIMIT 55
 #define EIGHTY_MMS_LIMIT 255
 
@@ -55,6 +56,9 @@ int lasty = 0;
 bool audit = false;
 int auditPhase = 1;
 
+long slowerAutopilotTime = 0;
+bool changedToSlow = false;
+
 uint8_t motorValue(float speed) {
   float secondsPerMinute = 60;
   float wheelDiameter = 60;
@@ -75,8 +79,12 @@ void autoPilotStop() {
   sendAutopilot(false);
   autoPilot = false;
   previousSensorState = -1;
-  motor1Target = 0;
-  motor2Target = 0;
+  // motor1Target = 0;
+  // motor2Target = 0;
+  motor1.run(-10);
+  motor2.run(10);
+  motor1Target = -10;
+  motor2Target = 10;
   led.setColor(0, 0, 0);
   led.show();
   emptyQueue(yellowDetection);
@@ -85,6 +93,7 @@ void autoPilotStop() {
   yellowSum = 0;
   redSum = 0;
   greenSum = 0;
+  speedThreshold = true;
 }
 
 void updateQueue(queue<float>& queue, float& sum, float value) {
@@ -95,6 +104,17 @@ void updateQueue(queue<float>& queue, float& sum, float value) {
     queue.pop();
   }
 }
+
+void updateRedQueue(queue<float>& queue, float& sum, float value) {
+  sum += value;
+  queue.push(value);
+  if (queue.size() > RED_BUFFER_SIZE) {
+    sum -= queue.front();
+    queue.pop();
+  }
+}
+
+
 
 float getValue(queue<float> queue, float sum) {
   return (1.0 - sum / queue.size()) * 10000.0;
@@ -124,19 +144,28 @@ void manageAutopilot(){
   }
   if (autoPilot) {
     sensorState = lineFinder.readSensors();
-    if (sensorState != previousSensorState) {
+    long now = millis();
+    if (sensorState != previousSensorState || (((slowerAutopilotTime < now) && ((slowerAutopilotTime + 10000) > now))) && !changedToSlow) {
+      int targetSpeed;
+      if ((slowerAutopilotTime < now) && ((slowerAutopilotTime + 10000) > now)){
+        targetSpeed = EIGHTY_MMS_LIMIT / 2;
+        changedToSlow = true;
+        bluetooth.sendData("-LOG : Changed to slow");
+      } else {
+        targetSpeed = EIGHTY_MMS_LIMIT;
+      }
       switch(sensorState) {
         case S1_IN_S2_IN:
-          motor1Target = EIGHTY_MMS_LIMIT;
-          motor2Target = -EIGHTY_MMS_LIMIT;
+          motor1Target = targetSpeed;
+          motor2Target = -targetSpeed;
           break;
         case S1_IN_S2_OUT:
-          motor1Target = EIGHTY_MMS_LIMIT;
+          motor1Target = targetSpeed;
           motor2Target = FIFTEEN_MMS_LIMIT;
           break;
         case S1_OUT_S2_IN:
           motor1Target = -FIFTEEN_MMS_LIMIT;
-          motor2Target = -EIGHTY_MMS_LIMIT;
+          motor2Target = -targetSpeed;
           break;
         case S1_OUT_S2_OUT:
           motor1Target = -EIGHTY_MMS_LIMIT/3;
@@ -168,8 +197,8 @@ void manageAutopilot(){
     led.show();
     float cyanValue = lightSensor.read();
 
-    updateQueue(redDetection, redSum, redValue / cyanValue);
-    bool redDetected = (redDetection.size() == bufferSize) && (getValue(redDetection, redSum) < redThreshold);
+    updateRedQueue(redDetection, redSum, redValue / cyanValue);
+    bool redDetected = (redDetection.size() == RED_BUFFER_SIZE) && (getValue(redDetection, redSum) < redThreshold);
 
     led.setColor(0, 255, 0);
     led.show();
@@ -181,18 +210,23 @@ void manageAutopilot(){
     
     updateQueue(greenDetection, greenSum, greenValue / magentaValue);
     bool greenDetected = (greenDetection.size() == bufferSize) && (getValue(greenDetection, greenSum) < greenThreshold);
-
-    /*Serial3.print("y = ");
-    Serial3.print(getValue(yellowDetection, yellowSum));
-    Serial3.print(" r = ");
-    Serial3.print(getValue(redDetection, redSum));
-    Serial3.print(" g = ");
-    Serial3.println(getValue(greenDetection, greenSum));*/
-
+  
     if (yellowDetected || redDetected || greenDetected) {
       autoPilotStop();
       sendColor(yellowDetected, redDetected, greenDetected);
       sendNextPhase();
+    }
+
+    if(greenDetected){
+      auditPhase = 2;
+      motor1.run(EIGHTY_MMS_LIMIT);
+      motor2.run(-EIGHTY_MMS_LIMIT);
+      waitedTime = millis() + 2900;
+      motor1Target = 0;
+      motor2Target = 0;
+      restartMotorsAfterDelay = true;
+      led.setColor(0, 0, 0);
+      led.show();
     }
   }
 }
@@ -209,7 +243,7 @@ void manageCommands(){
 
 void proceedCommand(String command){
   bluetooth.sendData("-LOG Proceeding command... (" + command +")");
-  if (command.substring(0,2) == String("A")){
+  if (command.substring(0,1) == String("A")){
     bluetooth.sendData("-LOG SWITCH !");
     if (autoPilot){
       autoPilotStop();
@@ -219,6 +253,11 @@ void proceedCommand(String command){
         swapMotor = 1;
         sendAutopilot(true);
         sendNextPhase();
+        if(command[1] == 'S'){
+          slowerAutopilotTime = millis() + 35000;
+          changedToSlow;
+          bluetooth.sendData("-LOG : Enabling slow autopilot");
+        }
       }
     }
   }

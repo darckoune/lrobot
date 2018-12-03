@@ -1,4 +1,4 @@
-#define DELAY_ALIVE 100
+#define DELAY_ALIVE 250
 #define SPEED_RATIO 78
 
 void sendSpeed(int motor1, int motor2){
@@ -36,7 +36,7 @@ void sendAutopilot(bool autopilotStatus){
 }
 
 void sendNextPhase(){
-  bluetooth.sendData("N");
+  bluetooth.sendData("NP");
 }
 
 long alive = 0;

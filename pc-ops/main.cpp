@@ -83,9 +83,11 @@ void listenToBluetooth(){
         bool autopilot = (data[1] & 1) > 0;
         sendMessageToIHM("robot", "AUTOPILOT:" + to_string(autopilot));
       }
-    } else if (data[0] == 'N'){
+    } else if (data[0] == 'N' && data[1] == 'P'){
       phase++;
       sendMessageToIHM("robot", "STEP:" + to_string(phase));
+    } else if (data[0] == 'Z'){
+      sendMessageToIHM("robot", "ALIVE");
     }
     
   }
@@ -170,7 +172,14 @@ int main(int argc, char* argv[]) {
       phase = 0;
       sendMessageToIHM("robot", "STEP:0");
     }
-    if (cevent.robotMessage != ""){
+    if (cevent.ihmMessage == "NEXT:STEP"){
+      phase++;
+      sendMessageToIHM("robot", "STEP:" + to_string(phase));
+    }
+    if (cevent.robotMessage == "A" && phase == 2){
+      sendMessageToRobot("AS");
+    }
+    if (cevent.robotMessage != "" && !(cevent.robotMessage == "A" && phase == 2)){
       sendMessageToRobot(cevent.robotMessage);
     }
     if (cevent.ihmMessage != ""){

@@ -140,6 +140,12 @@ controllerEvent Controller::getLastEvent() {
       event.ihmMessage = string("STEP:0");
     }
   }
+  if(START.changed){
+    START.changed = false;
+    if(START.value){
+      event.ihmMessage = string("NEXT:STEP");
+    }
+  }
   if(SELECT.changed || START.changed){
     START.changed = false;
     SELECT.changed = false;
