@@ -1,6 +1,6 @@
 #!/bin/bash
 while true
 do
-./pc-ops
+sudo ./pc-ops
 sleep 2
 done

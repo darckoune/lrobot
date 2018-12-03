@@ -1,0 +1,17 @@
+1 - Allumer I'ROBOT
+2 - Brancher la manette à PC OP's
+3 - Appairer le bluetooth de PC OP's avec celui de I'ROBOT en utilisant bluetoothctl :
+    - bluetoothctl
+    - scan on
+    - pair <MAC ADRESS> (Pour l'adaptateur bluetooth utilisé actuellement : 00:1B:10:20:31:D7)
+4 - Créer le fichier bluetooth série avec rfcomm
+    - sudo rfcomm bind 0 <MAC ADRESS> (Pour l'adaptateur bluetooth utilisé actuellement : 00:1B:10:20:31:D7)
+
+5 - Lancer le serveur de contrôle de PC OP's  
+    - sudo ./auto_relaunch.sh
+
+6 - Ouvrir l'IHM dans le navigateur de votre choix (Chrome, Firefox)
+    - Accéder à l'adresse file:///home/darckoune/Projects/lrobot/pc-ops/ROBAFIS_UI/home.html
+    - MEttre l'IHM en plein écran (F11)
+
+7 - Vérifier que les commandes répondent et que l'IHM est bien mise à jour. Le symbole "bluetooth" doit clignotter sur l'IHM.
