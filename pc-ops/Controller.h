@@ -58,6 +58,7 @@ class Controller {
 
   void setBooleanInputValue(booleanInput*, bool);
   void setIntInputValue(intInput*, int);
+  void setSmallerIntInputValue(intInput*, int);
   void setIntAsBooleanInputValue(intInput*, int);
   bool checkLastJoystick(int x, int y);
 

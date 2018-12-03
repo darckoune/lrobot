@@ -153,6 +153,13 @@ controllerEvent Controller::getLastEvent() {
       event.robotMessage = "X";
     }
   }
+  if(L2.changed || R2.changed){
+    L2.changed = false;
+    R2.changed = false;
+    if(L2.value > 1000 && R2.value > 1000){
+      event.ihmMessage = string("SHUTDOWN");
+    }
+  }
   return event;
 }
 
@@ -257,8 +264,8 @@ void Controller::update(input_event ev) {
       case   1: setIntInputValue(&JSL_V, ev.value); break;
       case   3: setIntInputValue(&JSR_H, ev.value); break;
       case   4: setIntInputValue(&JSR_V, ev.value); break;
-      case   2: setIntInputValue(&L2, ev.value); break;
-      case   5: setIntInputValue(&R2, ev.value); break;
+      case   2: setSmallerIntInputValue(&L2, ev.value); break;
+      case   5: setSmallerIntInputValue(&R2, ev.value); break;
       case  16: setIntAsBooleanInputValue(&DPAD_H, ev.value); break;
       case  17: setIntAsBooleanInputValue(&DPAD_V, ev.value); break;
       default: cout << "WTF" << endl;
@@ -276,8 +283,21 @@ void Controller::setBooleanInputValue(booleanInput* input, bool value){
 void Controller::setIntInputValue(intInput* input, int value){
   if (abs(value) < 6000){
     value = 0;
+    if (abs(value >= 6000)){
+      input->changed = true;
+    }
   }
   if (abs(input->value - value) > 3000){
+    input->value = value;
+    input->changed = true;
+  }
+}
+
+void Controller::setSmallerIntInputValue(intInput* input, int value){
+  if (abs(value) < 50){
+    value = 0;
+    input->changed = true;
+  } else {
     input->value = value;
     input->changed = true;
   }

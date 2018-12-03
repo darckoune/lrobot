@@ -42,19 +42,25 @@ void sendMessageToIHM(string type, string message){
       }
     });
   } else {
-    cout << "No IHM connected to send the message to." << endl;
+    cout << "No IHM connected to send the message \"" << message << "\" to." << endl;
   }
 }
 
 void sendMessageToRobot(string message){
   cout << "Sending to robot : " << message << endl;
   bluetooth << message << endl;
+  if (!bluetooth){
+    cout << "Error while sending to bluetooth" << endl;
+  }
 }
 
 
 void listenToBluetooth(){
   string data;
   ifstream bluetoothReciever ("/dev/rfcomm0", ifstream::binary); // changer pour /dev/rfcomm0 pour écouter le vrai bluetooth
+  if (!bluetoothReciever){
+    sendMessageToIHM("LOG", "Error while opening bluetooth serial file");
+  }
   while(1){
     getline(bluetoothReciever, data);
     // if (data.size() && data[0] != 'Z'){
@@ -125,7 +131,14 @@ int main(int argc, char* argv[]) {
   fd = open("/dev/input/by-id/usb-Microsoft_Controller_7EED87356C04-event-joystick", O_RDONLY);
   struct input_event ev;
 
+  cout << "Trying to open bluetooth file" << endl;
+
   bluetooth.open("/dev/rfcomm0");
+  if (!bluetooth){
+    cout << "Error while opening bluetooth serial file" << endl;
+  }
+
+  cout << "Opened bluetooth serial file" << endl;
 
   WsServer server;
   server.config.port = 8080;
@@ -171,6 +184,10 @@ int main(int argc, char* argv[]) {
     if (cevent.ihmMessage == "STEP:0"){
       phase = 0;
       sendMessageToIHM("robot", "STEP:0");
+    }
+    if (cevent.ihmMessage == "SHUTDOWN"){
+      cout << "Shutting down server" << endl;
+      exit(1);
     }
     if (cevent.ihmMessage == "NEXT:STEP"){
       phase++;
