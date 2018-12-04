@@ -116,7 +116,7 @@ void openBrowser(int argc, char* argv[]){
    }
 
    cout << path << endl;
-   system(("firefox file://" + path + "/ROBAFIS_UI/home.html 2>>/dev/null").c_str());
+  //system(("firefox file://" + path + "/ROBAFIS_UI/home.html 2>>/dev/null").c_str());
 }
 
 int main(int argc, char* argv[]) {

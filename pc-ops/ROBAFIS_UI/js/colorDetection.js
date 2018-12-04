@@ -85,6 +85,9 @@ addWebsocketCallback(function(data){
         case "GREEN":
           noColorDetected(colorContext)
           greenDetected(colorContext);
+          setTimeout(() => {
+            timer.stop();
+          }, 2900);
           break;
         case "RED":
           noColorDetected(colorContext)
