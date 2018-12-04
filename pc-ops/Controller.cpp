@@ -69,7 +69,7 @@ controllerEvent Controller::getLastEvent() {
   if(HOME.changed){
     HOME.changed = false;
     if(HOME.value){
-      event.robotMessage = string("A");
+      event.robotMessage = string("B");
       event.ihmMessage = string("AUTOPILOT");
     }
   }
@@ -91,8 +91,8 @@ controllerEvent Controller::getLastEvent() {
         event.ihmMessage += "CRANE:STOP";
         break;
       case 1:
-        event.robotMessage += "CL";
-        event.ihmMessage += "CRANE:LOWER";
+        event.robotMessage += "X";
+        event.ihmMessage += "AUDIT";
         break;
       case -1:
         event.robotMessage += "CR";
@@ -144,13 +144,6 @@ controllerEvent Controller::getLastEvent() {
     START.changed = false;
     if(START.value){
       event.ihmMessage = string("NEXT:STEP");
-    }
-  }
-  if(SELECT.changed || START.changed){
-    START.changed = false;
-    SELECT.changed = false;
-    if(SELECT.value && START.value){
-      event.robotMessage = "X";
     }
   }
   if(L2.changed || R2.changed){

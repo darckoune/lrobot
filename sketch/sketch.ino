@@ -243,7 +243,7 @@ void manageCommands(){
 
 void proceedCommand(String command){
   bluetooth.sendData("-LOG Proceeding command... (" + command +")");
-  if (command.substring(0,1) == String("A")){
+  if (command.substring(0,1) == String("B")){
     bluetooth.sendData("-LOG SWITCH !");
     if (autoPilot){
       autoPilotStop();
