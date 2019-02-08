@@ -1,0 +1,25 @@
+INSTALL SERVEUR
+1- Cloner dépot github
+2- installer librairies c++:
+sudo apt install libssl-dev libboost-all-dev
+3-Remplacer dans main.cpp le fichier de la manette par celui de la maette branchée
+  -> chercher le fichier de la manette : ls /dev/input/by-id/  --> Le bon fichier est le event-joystick
+  -> Le remplacer dans main.cpp ligne 131
+4- compiler avec la commande sur github
+
+
+SETUP BLUETOOTH
+apparaiment :
+sudo bluetoothctl
+scan on
+pair <MAC>
+
+creer le port série
+sudo rfcomm bind 0 <MAC>
+
+Lancement :
+
+cd pc-ops
+sudo ./pc-ops
+
+ouvrir l'ihm dans firefox (pc-ops/ROBAFIS_UI/home.html)

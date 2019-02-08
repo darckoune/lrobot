@@ -17,11 +17,7 @@ addWebsocketCallback(function(data){
         choseIHM("MANU");
       }
 
-      if (phase == 0){
-        $('#chronometer').html("00:00:00");
-        timer.reset();
-        timer.stop();
-      } else if (phase == 1){
+      if (phase == 1){
         timer.start();
       }
     }

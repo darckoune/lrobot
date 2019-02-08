@@ -128,7 +128,7 @@ int main(int argc, char* argv[]) {
 
   int fd;
 
-  fd = open("/dev/input/by-id/usb-Microsoft_Controller_7EED87356C04-event-joystick", O_RDONLY);
+  fd = open("/dev/input/by-id/usb-©Microsoft_Corporation_Controller_0E82AD6-event-joystick", O_RDONLY);
   struct input_event ev;
 
   cout << "Trying to open bluetooth file" << endl;
@@ -193,8 +193,8 @@ int main(int argc, char* argv[]) {
       phase++;
       sendMessageToIHM("robot", "STEP:" + to_string(phase));
     }
-    if (cevent.robotMessage == "A" && phase == 2){
-      sendMessageToRobot("AS");
+    if (cevent.robotMessage == "B" && phase == 2){
+      sendMessageToRobot("BS");
     }
     if (cevent.robotMessage != "" && !(cevent.robotMessage == "A" && phase == 2)){
       sendMessageToRobot(cevent.robotMessage);

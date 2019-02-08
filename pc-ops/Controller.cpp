@@ -91,8 +91,8 @@ controllerEvent Controller::getLastEvent() {
         event.ihmMessage += "CRANE:STOP";
         break;
       case 1:
-        event.robotMessage += "X";
-        event.ihmMessage += "AUDIT";
+        event.robotMessage += "CL";
+        event.ihmMessage += "CRANE:LOWER";
         break;
       case -1:
         event.robotMessage += "CR";
